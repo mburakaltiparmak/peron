@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peron — Gizlilik / Privacy</title>
+<link rel="icon" href="/peron/logo.png">
+<style>
+  :root { color-scheme: light dark; --fg:#1c2025; --muted:#69717c; --bg:#fff; --accent:#2563eb; --card:#f5f6f8; }
+  @media (prefers-color-scheme: dark) { :root { --fg:#e6e8eb; --muted:#979fa9; --bg:#16181b; --accent:#6392f0; --card:#1e2125; } }
+  body { margin:0; font:16px/1.6 "Segoe UI", system-ui, sans-serif; color:var(--fg); background:var(--bg); }
+  main { max-width: 820px; margin: 0 auto; padding: 32px 20px 64px; }
+  header { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+  header a { color:inherit; text-decoration:none; font-weight:700; font-size:20px; display:flex; gap:10px; align-items:center; }
+  nav { margin-left:auto; display:flex; gap:16px; font-size:14px; }
+  a { color: var(--accent); }
+  h1 { font-size: 28px; line-height:1.2; } h2 { margin-top: 36px; } h3 { margin-top: 24px; }
+  code { background: var(--card); padding: 1px 5px; border-radius: 4px; }
+  hr { border: none; border-top: 1px solid var(--card); margin: 36px 0; }
+  .card { background: var(--card); border-radius: 12px; padding: 18px 20px; margin: 16px 0; }
+  .btn { display:inline-block; background: var(--accent); color:#fff; padding:10px 16px; border-radius:8px; text-decoration:none; margin:4px 8px 4px 0; }
+  .muted { color: var(--muted); font-size: 14px; }
+  footer { margin-top: 48px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body><main>
+<header><a href="/peron/"><img src="/peron/logo.png" width="32" height="32" alt="">Peron</a>
+<nav><a href="/peron/">İndir / Download</a><a href="/peron/support/">Destek / Support</a><a href="/peron/privacy/">Gizlilik / Privacy</a></nav></header>
+<h1 id="peron-gizlilik-politikası-privacy-policy">Peron — Gizlilik Politikası / Privacy Policy</h1>
+<p><strong>Yürürlük / Effective:</strong> 2026-09-25 · <strong>Sürüm / Applies to:</strong> Peron 0.1.0-beta.1 and later <strong>Yayın adresi / Published at:</strong> <a href="https://burakaltiparmak.dev/products/peron/privacy">https://burakaltiparmak.dev/products/peron/privacy</a> · <a href="https://github.com/mburakaltiparmak/peron/blob/main/PRIVACY.md">https://github.com/mburakaltiparmak/peron/blob/main/PRIVACY.md</a></p>
+<hr>
+<h2 id="türkçe">Türkçe</h2>
+<p>Peron, bilgisayarınızda açık olan portları ve bunları kullanan süreçleri gösteren bir masaüstü uygulamasıdır. Geliştirici: M. Burak Altıparmak ("biz").</p>
+<h3 id="özet">Özet</h3>
+<ul>
+<li>Peron <strong>hesap istemez, reklam göstermez, telemetri/analitik toplamaz.</strong></li>
+<li>Port listesi, süreç adları, komut satırları, klasör yolları ve kaynak kullanımı <strong>yalnızca cihazınızda</strong> işlenir; hiçbir yere gönderilmez.</li>
+<li>Cihazdan veri çıkan yalnızca şu durumlar vardır: <strong>(1)</strong> siz geri bildirim formunu gönderdiğinizde, <strong>(2)</strong> Microsoft Store dışından indirilen sürümlerde isteğe bağlı güncelleme kontrolü, <strong>(3)</strong> sunucu eklediyseniz, SSH ile yalnızca kendi sunucunuzla (bkz. 3a).</li>
+</ul>
+<h3 id="1-geri-bildirim-formu-isteğe-bağlı-">1. Geri bildirim formu (isteğe bağlı)</h3>
+<p>"İletişim" sekmesinden mesaj gönderdiğinizde şu bilgiler <strong>Web3Forms</strong> (Web3Forms.com) aracılığıyla e-posta olarak geliştiriciye (mburakaltiparmak@gmail.com) iletilir:</p>
+<ul>
+<li>Yazdığınız mesaj ve seçtiğiniz tür (hata / öneri / diğer)</li>
+<li>İsteğe bağlı olarak adınız ve yanıt için e-posta adresiniz</li>
+<li>"Sürüm ve işletim sistemi bilgisini ekle" seçiliyse Peron sürümü, işletim sistemi adı/sürümü ve uygulama dili</li>
+</ul>
+<p><strong>Amaç:</strong> geri bildiriminizi okumak ve isterseniz yanıtlamak. <strong>Hukuki dayanak:</strong> açık rızanız (formu kendiniz gönderirsiniz). Web3Forms bu veriyi e-postayı iletmek için işleyen üçüncü taraf bir hizmettir; kendi gizlilik politikası geçerlidir: <a href="https://web3forms.com/privacy">https://web3forms.com/privacy</a>. Web3Forms'a bağlanırken IP adresiniz, her internet isteğinde olduğu gibi, bu hizmet tarafından görülebilir. Mesajlar geliştiricinin e-posta kutusunda, konusu kapanana kadar ve en fazla <strong>24 ay</strong> saklanır, sonra silinir.</p>
+<h3 id="2-güncelleme-kontrolü-yalnızca-site-github-sürümü-">2. Güncelleme kontrolü (yalnızca site/GitHub sürümü)</h3>
+<p>Microsoft Store dışından (burakaltiparmak.dev veya GitHub) indirilen sürüm, günde en fazla bir kez GitHub'ın herkese açık API'sinden (api.github.com) yayımlanan sürüm listesini okur. Bu istekte sizinle ilgili bir bilgi gönderilmez; GitHub isteği yapanın IP adresini görebilir (GitHub gizlilik bildirimi: <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement">https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement</a>). Ayarlar &gt; "Yeni sürüm çıktığında haber ver" seçeneğiyle kapatılabilir. <strong>Microsoft Store sürümü bu kontrolü hiç yapmaz;</strong> güncellemeleri Store üzerinden alır.</p>
+<h3 id="3-cihazınızda-saklanan-veriler">3. Cihazınızda saklanan veriler</h3>
+<p>Aşağıdakiler yalnızca bilgisayarınızda, kullanıcı hesabınızın uygulama veri klasöründe tutulur ve kimseyle paylaşılmaz:</p>
+<ul>
+<li><strong>Ayarlar</strong> (dil, tema, filtreler, hatırlatma süreleri)</li>
+<li><strong>Geri bildirim gönderim zamanları</strong> (kötüye kullanımı önlemek için saatte/günde gönderim sınırı; en fazla 24 saat)</li>
+<li><strong>Tanılama günlüğü</strong> (Windows'ta <code>Belgeler\Peron\Logs</code>, en fazla ~1 MB; yalnızca teknik hata iletileri, port listesi veya komut satırı içermez). Ayarlar &gt; "Günlük klasörünü aç" ile görebilir, silebilirsiniz. Belgeler klasörünüz OneDrive ile eşitleniyorsa bu dosyalar da OneDrive'ınıza eşitlenir.</li>
+<li><strong>Port geçmişi</strong> (hangi portun ne zaman açılıp kapandığı, süreç adı, PID, proje klasör adı, adresler; en fazla 30 gün / 2.000 olay). Geçmiş sekmesinden görebilir, dışa aktarabilir veya temizleyebilirsiniz.</li>
+<li><strong>Sunucu listesi</strong> (uzak izleme için eklediğiniz sunucuların adı ve SSH hedefi). SSH anahtarları veya parolalar Peron tarafından saklanmaz.</li>
+<li><strong>Dışa aktarılan dosyalar</strong> yalnızca siz istediğinizde, İndirilenler klasörünüze yazılır.</li>
+</ul>
+<h3 id="3a-uzak-sunucu-izleme-isteğe-bağlı-">3a. Uzak sunucu izleme (isteğe bağlı)</h3>
+<p>Bir sunucu eklediğinizde Peron, bilgisayarınızdaki <code>ssh</code> istemcisini ve sizin SSH anahtarlarınızı kullanarak o sunucuda <code>peron-cli</code>'ı çalıştırır. Port ve süreç bilgileri <strong>doğrudan sunucunuzdan bilgisayarınıza</strong> SSH ile şifreli olarak gelir; geliştiriciye veya herhangi bir üçüncü tarafa gitmez. Sunucuda yeni bir servis çalıştırılmaz ya da port açılmaz.</p>
+<p>Kaldırma: Microsoft Store sürümünü kaldırdığınızda bu veriler Windows tarafından otomatik silinir; yalnızca <code>Belgeler\Peron\Logs</code> klasörü kalır, elle silebilirsiniz. Site/GitHub sürümünde kaldırıcıdaki "Uygulama verilerini sil" seçeneği varsayılan olarak işaretlidir ve günlük dosyalarını da siler; verileri tutmak isterseniz işareti kaldırın.</p>
+<h3 id="4-süreç-sonlandırma">4. Süreç sonlandırma</h3>
+<p>Peron bir süreci yalnızca siz onay penceresinde açıkça onayladığınızda sonlandırır. Bu işlem tamamen yereldir.</p>
+<h3 id="5-çocuklar">5. Çocuklar</h3>
+<p>Peron geliştiricilere yönelik bir araçtır; bilerek 13 yaşından küçüklerden veri toplamayız.</p>
+<h3 id="6-haklarınız-ve-iletişim">6. Haklarınız ve iletişim</h3>
+<p>Gönderdiğiniz geri bildirimin kopyasını, düzeltilmesini veya silinmesini istemek için: <strong>mburakaltiparmak@gmail.com</strong> (konu: "Peron gizlilik"). 30 gün içinde yanıt veririz. KVKK ve GDPR kapsamındaki haklarınız saklıdır.</p>
+<h3 id="7-değişiklikler">7. Değişiklikler</h3>
+<p>Bu politika değişirse yeni sürümü aynı adreste, yürürlük tarihini güncelleyerek yayımlarız. Önemli değişiklikler sürüm notlarında belirtilir.</p>
+<hr>
+<h2 id="english">English</h2>
+<p>Peron is a desktop app that shows the ports open on your computer and the processes using them. Developer: M. Burak Altıparmak ("we").</p>
+<h3 id="summary">Summary</h3>
+<ul>
+<li>Peron has <strong>no accounts, no ads, no telemetry or analytics.</strong></li>
+<li>The port list, process names, command lines, folder paths and resource usage are processed <strong>only on your device</strong> and are never sent anywhere.</li>
+<li>Data leaves your device only in these cases: <strong>(1)</strong> when you submit the feedback form, <strong>(2)</strong> the optional update check in builds downloaded outside the Microsoft Store, <strong>(3)</strong> if you add a server, over SSH with that server only (see 3a).</li>
+</ul>
+<h3 id="1-feedback-form-optional-">1. Feedback form (optional)</h3>
+<p>When you send a message from the "Contact" tab, the following is delivered by email to the developer (mburakaltiparmak@gmail.com) via <strong>Web3Forms</strong> (web3forms.com):</p>
+<ul>
+<li>Your message and the type you chose (bug / suggestion / other)</li>
+<li>Optionally your name and a reply email address</li>
+<li>If "Include app version and operating system" is checked: Peron version, OS name/version and app language</li>
+</ul>
+<p><strong>Purpose:</strong> to read and, if you wish, answer your feedback. <strong>Legal basis:</strong> your consent (you submit the form yourself). Web3Forms is a third-party service that processes this data to deliver the email; its privacy policy applies: <a href="https://web3forms.com/privacy">https://web3forms.com/privacy</a>. As with any internet request, Web3Forms can see your IP address when you connect. Messages are kept in the developer's mailbox until the matter is closed and for at most <strong>24 months</strong>, then deleted.</p>
+<h3 id="2-update-check-site-github-builds-only-">2. Update check (site/GitHub builds only)</h3>
+<p>The version downloaded outside the Microsoft Store (burakaltiparmak.dev or GitHub) reads the list of published releases from GitHub's public API (api.github.com) at most once a day. No information about you is sent; GitHub can see the requesting IP address (GitHub privacy statement: <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement">https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement</a>). Turn it off in Settings → "Tell me when a new version is out". <strong>The Microsoft Store version never performs this check;</strong> it is updated through the Store.</p>
+<h3 id="3-data-stored-on-your-device">3. Data stored on your device</h3>
+<p>Kept only on your computer, in your user account's app data folder, and never shared:</p>
+<ul>
+<li><strong>Settings</strong> (language, theme, filters, reminder durations)</li>
+<li><strong>Feedback send times</strong> (hourly/daily send limit against abuse; at most 24 hours)</li>
+<li><strong>Diagnostics log</strong> (on Windows <code>Documents\Peron\Logs</code>, max ~1 MB; technical error messages only, no port lists or command lines). View or delete it via Settings → "Open log folder". If your Documents folder is synced by OneDrive, these files are synced to your OneDrive too.</li>
+<li><strong>Port history</strong> (which port opened/closed when, process name, PID, project folder name, addresses; at most 30 days / 2,000 events). View, export or clear it in the History tab.</li>
+<li><strong>Server list</strong> (name and SSH target of servers you add for the remote view). Peron never stores SSH keys or passwords.</li>
+<li><strong>Exported files</strong> are written only when you ask, to your Downloads folder.</li>
+</ul>
+<h3 id="3a-remote-server-view-optional-">3a. Remote server view (optional)</h3>
+<p>When you add a server, Peron runs <code>peron-cli</code> on it using the <code>ssh</code> client on your computer and your own SSH keys. Port and process data travel <strong>directly from your server to your computer</strong>, encrypted by SSH; they never go to the developer or any third party. No service is installed and no port is opened on the server.</p>
+<p>Uninstalling: the Microsoft Store version's data is removed by Windows automatically, except the <code>Documents\Peron\Logs</code> folder, which you can delete yourself. For the site/GitHub version, "Delete application data" in the uninstaller is checked by default and also removes the log files; untick it to keep your data.</p>
+<h3 id="4-ending-processes">4. Ending processes</h3>
+<p>Peron ends a process only after you explicitly confirm it in the confirmation dialog. This happens entirely on your device.</p>
+<h3 id="5-children">5. Children</h3>
+<p>Peron is a tool for developers; we do not knowingly collect data from children under 13.</p>
+<h3 id="6-your-rights-and-contact">6. Your rights and contact</h3>
+<p>To request a copy, correction or deletion of feedback you sent: <strong>mburakaltiparmak@gmail.com</strong> (subject: "Peron privacy"). We reply within 30 days. Your rights under GDPR and Turkish KVKK are unaffected.</p>
+<h3 id="7-changes">7. Changes</h3>
+<p>If this policy changes we publish the new version at the same address with an updated effective date. Material changes are mentioned in the release notes.</p>
+<footer>© 2026 <a href="https://burakaltiparmak.dev">M. Burak Altıparmak</a> · <a href="https://github.com/mburakaltiparmak/peron">GitHub</a> · <a href="https://github.com/mburakaltiparmak/peron/blob/main/LICENSE">GPL-3.0</a> · <a href="https://github.com/mburakaltiparmak/peron/blob/main/EULA.md">Store EULA</a> · <a href="https://buymeacoffee.com/mburakaltiparmak">☕ Buy me a coffee</a></footer>
+</main></body></html>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  MSIX manifest for the Microsoft Store build. Filled in by packaging/msix/build-msix.ps1:
+    {{IDENTITY_NAME}}, {{PUBLISHER}}          from Partner Center (Product identity page)
+    {{PUBLISHER_DISPLAY_NAME}}               e.g. "M. Burak Altıparmak"
+    {{VERSION}}                              Major.Minor.Build.0 (Store requires Revision = 0)
+  The Store re-signs the package with a Microsoft certificate, so no code-signing certificate
+  of our own is needed for Store distribution.
+-->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap desktop rescap">
+
+  <Identity Name="{{IDENTITY_NAME}}" Publisher="{{PUBLISHER}}" Version="{{VERSION}}" ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>Peron</DisplayName>
+    <PublisherDisplayName>{{PUBLISHER_DISPLAY_NAME}}</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>Localhost port manager: see which process holds a port and close forgotten dev servers.</Description>
+  </Properties>
+
+  <Dependencies>
+    <!-- 1809+: WebView2 Evergreen runtime is available/serviced by Windows Update. -->
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="en-US" />
+    <Resource Language="tr-TR" />
+  </Resources>
+
+  <Applications>
+    <Application Id="Peron" Executable="peron.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="Peron"
+        Description="Localhost port manager"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+      </uap:VisualElements>
+
+      <Extensions>
+        <!-- Sign-in autostart (Settings → "Start with Windows"). TaskId must match
+             STARTUP_TASK_ID in src-tauri/src/platform/windows.rs. Off until the user enables it. -->
+        <desktop:Extension Category="windows.startupTask" Executable="peron.exe" EntryPoint="Windows.FullTrustApplication">
+          <desktop:StartupTask TaskId="PeronStartup" Enabled="false" DisplayName="Peron" />
+        </desktop:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <!-- Win32 desktop app (reads the TCP/UDP tables, ends processes on user confirmation). -->
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>

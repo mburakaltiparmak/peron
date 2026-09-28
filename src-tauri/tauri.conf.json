@@ -1,0 +1,54 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Peron",
+  "version": "0.1.0-beta.1",
+  "identifier": "com.peron.app",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Peron",
+        "width": 1180,
+        "height": 720,
+        "minWidth": 820,
+        "minHeight": 480,
+        "visible": false,
+        "create": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' ipc: http://ipc.localhost; connect-src 'self' ipc: http://ipc.localhost https://api.web3forms.com https://api.github.com; style-src 'self'; img-src 'self' data:",
+      "devCsp": "default-src 'self' ipc: http://ipc.localhost ws://localhost:1420; connect-src 'self' ipc: http://ipc.localhost ws://localhost:1420 https://api.web3forms.com https://api.github.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "shortDescription": "Localhost port manager",
+    "publisher": "M. Burak Altıparmak",
+    "homepage": "https://burakaltiparmak.dev",
+    "copyright": "© 2026 M. Burak Altıparmak",
+    "windows": {
+      "webviewInstallMode": { "type": "downloadBootstrapper" },
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": ["English", "Turkish"],
+        "displayLanguageSelector": true,
+        "installerHooks": "./installer-hooks.nsh",
+        "template": "./nsis/installer.nsi"
+      }
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico"
+    ]
+  }
+}

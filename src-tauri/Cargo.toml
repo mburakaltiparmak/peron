@@ -1,0 +1,59 @@
+# Workspace root = the desktop app package.
+#   crates/core  peron-core   ports/processes/export/history, no GUI deps
+#   crates/cli   peron-cli    headless CLI for servers (and the SSH remote view)
+# The version lives in [workspace.package]; keep it equal to package.json and tauri.conf.json.
+[workspace]
+members = [".", "crates/core", "crates/cli"]
+
+[workspace.package]
+version = "0.1.0-beta.1"
+edition = "2021"
+authors = ["M. Burak Altıparmak <mburakaltiparmak@gmail.com>"]
+homepage = "https://burakaltiparmak.dev"
+license = "GPL-3.0-only"
+repository = "https://github.com/mburakaltiparmak/peron"
+
+[package]
+name = "peron"
+description = "Localhost port manager for Windows and Linux"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "peron_lib"
+crate-type = ["rlib"] # desktop-only; staticlib/cdylib are only needed for mobile targets
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+peron-core = { path = "crates/core" }
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-opener = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri-plugin-single-instance = "2.4.5"
+tauri-plugin-autostart = "2.5.1"
+sysinfo = { version = "0.39.6", default-features = false, features = ["system"] }
+
+[target.'cfg(windows)'.dependencies]
+tauri-winrt-notification = "0.7"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+notify-rust = "4"
+
+
+# Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true

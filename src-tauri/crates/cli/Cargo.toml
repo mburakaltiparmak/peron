@@ -1,0 +1,18 @@
+[package]
+name = "peron-cli"
+description = "Peron for terminals and headless servers: list, export, watch and close ports."
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[[bin]]
+name = "peron-cli"
+path = "src/main.rs"
+
+[dependencies]
+peron-core = { path = "../core" }
+serde_json = "1"
+sysinfo = { version = "0.39.6", default-features = false, features = ["system"] }

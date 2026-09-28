@@ -1,0 +1,41 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Rust test builds
+src-tauri/target-test/
+
+# Secrets (Web3Forms access key etc.)
+.env
+.env.*
+!.env.example
+
+# Linux bundles copied out of Docker
+dist-linux/
+
+# Static peron-cli staged for the Linux .deb/.rpm (docker/linux-build.sh)
+src-tauri/bin/
+
+# macOS icon produced by `tauri icon` (no macOS target)
+src-tauri/icons/icon.icns

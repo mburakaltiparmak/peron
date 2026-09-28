@@ -1,0 +1,20 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "bundle": {
+    "targets": ["deb", "rpm", "appimage"],
+    "category": "DeveloperTool",
+    "shortDescription": "Localhost port manager",
+    "longDescription": "Peron lists ports left open on localhost, shows which process owns them, who started it and what it consumes, and closes forgotten ones on request. It idles in the system tray and reminds you about dev servers left running. Includes peron-cli for terminals and servers.",
+    "linux": {
+      "deb": {
+        "depends": ["libayatana-appindicator3-1"],
+        "section": "devel",
+        "files": { "/usr/bin/peron-cli": "bin/peron-cli" }
+      },
+      "rpm": {
+        "depends": ["libayatana-appindicator-gtk3"],
+        "files": { "/usr/bin/peron-cli": "bin/peron-cli" }
+      }
+    }
+  }
+}
