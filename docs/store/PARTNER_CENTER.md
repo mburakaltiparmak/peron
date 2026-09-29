@@ -12,7 +12,7 @@ live in their own files and are linked. Product type: **MSIX or PWA app** — ne
 | Package/Identity/Publisher | `CN=9B72CAB6-7945-401D-A620-65C1A1B29120` |
 | Package/Properties/PublisherDisplayName | `M. Burak Altiparmak` |
 | Package Family Name (PFN) | `M.BurakAltiparmak.Peron_jtmghbyjncjp8` |
-| Store ID | `9MVV5PRQ9J6D` → https://apps.microsoft.com/detail/9MVV5PRQ9J6D (after going live) |
+| Store ID | `9MVV5PRQ9J6D` → https://apps.microsoft.com/detail/9MVV5PRQ9J6D |
 
 The first three are the defaults of `packaging/msix/build-msix.ps1` and the GitHub repository variables
 `MSIX_IDENTITY_NAME`, `MSIX_PUBLISHER`, `MSIX_PUBLISHER_DISPLAY_NAME`. They must match exactly.
@@ -46,6 +46,10 @@ Partner Center demand a "Windows Mixed Reality immersive headset" hardware choic
 
 System requirements: keyboard ✅, mouse ✅ (minimum and recommended); everything else not specified.
 Architecture (x64) and minimum Windows (10.0.17763) come from the package.
+
+## Publication status
+- **Approved and public:** 2026-09-29
+- **Microsoft Store:** https://apps.microsoft.com/detail/9MVV5PRQ9J6D
 
 ## Age ratings (IARC)
 - Type: **Utility, Productivity, Communication, or Other**. Contact email: mburakaltiparmak@gmail.com

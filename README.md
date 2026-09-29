@@ -33,7 +33,7 @@
 ## Download
 | Platform | Where |
 |---|---|
-| Windows 10/11 (x64) | Microsoft Store *(coming soon)* · [GitHub Releases](https://github.com/mburakaltiparmak/peron/releases) (`Peron_<version>_x64-setup.exe`) |
+| Windows 10/11 (x64) | [Microsoft Store](https://apps.microsoft.com/detail/9MVV5PRQ9J6D) · [GitHub Releases](https://github.com/mburakaltiparmak/peron/releases) (`Peron_<version>_x64-setup.exe`) |
 | Linux x64 | [GitHub Releases](https://github.com/mburakaltiparmak/peron/releases): `.deb`, `.rpm`, `.AppImage` |
 
 The direct-download Windows installer is not code-signed yet, so SmartScreen may show "Windows protected your PC" → *More info* → *Run anyway*. The Microsoft Store version is signed by Microsoft.
@@ -77,6 +77,6 @@ Peron is free. If it saves you time, you can [buy me a coffee ☕](https://buyme
 ---
 
 ## Türkçe
-Peron, localhost'ta açık kalan portları; onları hangi sürecin tuttuğunu, kimin başlattığını, ne zamandır açık olduğunu ve ne kadar kaynak tükettiğini gösteren, unutulan portları tek tıkla kapatmanızı sağlayan ücretsiz bir masaüstü uygulamasıdır. İndirme: Microsoft Store (yakında), [GitHub Releases](https://github.com/mburakaltiparmak/peron/releases) ve [burakaltiparmak.dev/products/peron](https://burakaltiparmak.dev/products/peron). Gizlilik: [PRIVACY.md](PRIVACY.md) · Destek: [SUPPORT.md](SUPPORT.md) · [Bana bir kahve ısmarla ☕](https://buymeacoffee.com/mburakaltiparmak) (tamamen isteğe bağlı).
+Peron, localhost'ta açık kalan portları; onları hangi sürecin tuttuğunu, kimin başlattığını, ne zamandır açık olduğunu ve ne kadar kaynak tükettiğini gösteren, unutulan portları tek tıkla kapatmanızı sağlayan ücretsiz bir masaüstü uygulamasıdır. İndirme: [Microsoft Store](https://apps.microsoft.com/detail/9MVV5PRQ9J6D), [GitHub Releases](https://github.com/mburakaltiparmak/peron/releases) ve [burakaltiparmak.dev/products/peron](https://burakaltiparmak.dev/products/peron). Gizlilik: [PRIVACY.md](PRIVACY.md) · Destek: [SUPPORT.md](SUPPORT.md) · [Bana bir kahve ısmarla ☕](https://buymeacoffee.com/mburakaltiparmak) (tamamen isteğe bağlı).
 
 **Lisans:** kaynak kod ve GitHub derlemeleri [GPL-3.0](LICENSE); Microsoft Store sürümü [EULA](EULA.md) ile ücretsiz. "Peron" adı ve logosu GPL kapsamında değildir; fork'lar farklı bir adla ve logosuz yayımlanmalıdır. Katkılar [CLA](CLA.md) onayı gerektirir.
