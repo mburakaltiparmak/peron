@@ -73,47 +73,49 @@ export function ServersDialog({ hosts, version, onSave, onClose }: Props) {
     <div className="backdrop">
       <div ref={ref} className="dialog wide" role="dialog" aria-modal="true" aria-labelledby="servers-title">
         <h2 id="servers-title">{t.serversTitle}</h2>
-        <p className="muted small">{t.serversIntro}</p>
+        <div className="dialog-body">
+          <p className="muted small">{t.serversIntro}</p>
 
-        {list.length > 0 && (
-          <ul className="server-list">
-            {list.map((h) => (
-              <li key={h.id}>
-                <strong>{h.name}</strong>
-                <span className="mono small muted">{h.target}{h.port ? `:${h.port}` : ""}</span>
-                <button className="small danger" onClick={() => setList((l) => l.filter((x) => x.id !== h.id))}>{t.remove}</button>
-              </li>
-            ))}
-          </ul>
-        )}
+          {list.length > 0 && (
+            <ul className="server-list">
+              {list.map((h) => (
+                <li key={h.id}>
+                  <strong>{h.name}</strong>
+                  <span className="mono small muted">{h.target}{h.port ? `:${h.port}` : ""}</span>
+                  <button className="small danger" onClick={() => setList((l) => l.filter((x) => x.id !== h.id))}>{t.remove}</button>
+                </li>
+              ))}
+            </ul>
+          )}
 
-        <fieldset>
-          <legend>{t.addServer}</legend>
-          <div className="row3">
-            <label className="field-col">
-              <span className="label">{t.serverName}</span>
-              <input type="text" value={name} maxLength={80} placeholder="web-01" onChange={(e) => setName(e.target.value)} />
-            </label>
-            <label className="field-col">
-              <span className="label">{t.serverTarget}</span>
-              <input type="text" value={target} placeholder="deploy@web-01.example.com" spellCheck={false} onChange={(e) => setTarget(e.target.value)} />
-            </label>
-            <label className="field-col narrow">
-              <span className="label">{t.serverPort}</span>
-              <input type="number" min={1} max={65535} value={port} placeholder="22" onChange={(e) => setPort(e.target.value)} />
-            </label>
-          </div>
-          <div className="form-actions">
-            <span className={`small ${status?.error ? "error-text" : "muted"}`}>{status?.text ?? t.firstConnectHint}</span>
-            <span className="actions-row">
-              <button onClick={test} disabled={busy || !target.trim()}>{busy ? t.testing : t.testConnection}</button>
-              <button className="primary" onClick={add} disabled={!target.trim()}>{t.addServer}</button>
-            </span>
-          </div>
-        </fieldset>
+          <fieldset>
+            <legend>{t.addServer}</legend>
+            <div className="row3">
+              <label className="field-col">
+                <span className="label">{t.serverName}</span>
+                <input type="text" value={name} maxLength={80} placeholder="web-01" onChange={(e) => setName(e.target.value)} />
+              </label>
+              <label className="field-col">
+                <span className="label">{t.serverTarget}</span>
+                <input type="text" value={target} placeholder="deploy@web-01.example.com" spellCheck={false} onChange={(e) => setTarget(e.target.value)} />
+              </label>
+              <label className="field-col narrow">
+                <span className="label">{t.serverPort}</span>
+                <input type="number" min={1} max={65535} value={port} placeholder="22" onChange={(e) => setPort(e.target.value)} />
+              </label>
+            </div>
+            <div className="form-actions">
+              <span className={`small ${status?.error ? "error-text" : "muted"}`}>{status?.text ?? t.firstConnectHint}</span>
+              <span className="actions-row">
+                <button onClick={test} disabled={busy || !target.trim()}>{busy ? t.testing : t.testConnection}</button>
+                <button className="primary" onClick={add} disabled={!target.trim()}>{t.addServer}</button>
+              </span>
+            </div>
+          </fieldset>
 
-        <p className="small">{t.installHint}</p>
-        <pre className="cmd">{cliInstall(version)}</pre>
+          <p className="small">{t.installHint}</p>
+          <pre className="cmd">{cliInstall(version)}</pre>
+        </div>
 
         <div className="dialog-actions">
           <button onClick={onClose}>{t.cancel}</button>

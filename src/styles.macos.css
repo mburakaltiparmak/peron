@@ -28,6 +28,7 @@
   --glass-highlight: rgba(255, 255, 255, 0.75);
   --shadow: 0 10px 34px rgba(0, 0, 0, 0.16), 0 1px 3px rgba(0, 0, 0, 0.08);
   --header: rgba(250, 250, 252, 0.86);
+  --group: rgba(255, 255, 255, 0.55);
   color-scheme: light;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -53,6 +54,7 @@
     --glass-highlight: rgba(255, 255, 255, 0.14);
     --shadow: 0 12px 36px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
     --header: rgba(38, 38, 41, 0.9);
+    --group: rgba(255, 255, 255, 0.05);
     color-scheme: dark;
   }
 }
@@ -74,6 +76,7 @@
   --glass-highlight: rgba(255, 255, 255, 0.14);
   --shadow: 0 12px 36px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
   --header: rgba(38, 38, 41, 0.9);
+  --group: rgba(255, 255, 255, 0.05);
   color-scheme: dark;
 }
 
@@ -317,7 +320,6 @@
 [data-platform="macos"] .note,
 [data-platform="macos"] .error { border-radius: 9px; }
 [data-platform="macos"] .server-list li { border-radius: 9px; }
-[data-platform="macos"] fieldset { border-radius: 12px; }
 
 /* ---- Floating: menus, dialogs, toast (CSS glass) ------------------------------------------ */
 [data-platform="macos"] .menu,
@@ -338,6 +340,97 @@
 [data-platform="macos"] .backdrop { background: rgba(0, 0, 0, 0.2); }
 [data-platform="macos"] .toast { border-radius: 999px; padding: 9px 18px; }
 [data-platform="macos"] .toast.error { border-radius: 999px; box-shadow: var(--shadow); }
+
+/* ---- Dialog sections: macOS grouped boxes ---------------------------------------------------
+   Instead of an HTML fieldset whose legend cuts the border: a borderless, softly filled rounded
+   group with its title inside at the top and hairlines between rows (like System Settings). */
+[data-platform="macos"] fieldset {
+  border: none;
+  border-radius: 12px;
+  margin: 0 0 12px;
+  padding: 0 14px;
+  background: var(--group);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+/* A floated legend becomes an ordinary block inside the box (no border gap). */
+[data-platform="macos"] legend {
+  float: left;
+  width: 100%;
+  margin: 0;
+  padding: 11px 0 3px;
+  font-weight: 600;
+}
+[data-platform="macos"] legend + * { clear: both; }
+[data-platform="macos"] fieldset > .field,
+[data-platform="macos"] fieldset > .check {
+  display: flex;
+  margin: 0;
+  padding: 9px 0;
+  min-height: 40px;
+}
+[data-platform="macos"] fieldset > :is(.field, .check) + :is(.field, .check) {
+  border-top: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
+}
+/* Notes belong to the row above them: no separator, tight spacing. */
+[data-platform="macos"] fieldset > p { margin: -4px 0 10px; }
+[data-platform="macos"] fieldset > :last-child:is(.field, .check) { padding-bottom: 11px; }
+
+/* Long dialogs (Settings, Servers): title and action strip stay fixed, only .dialog-body scrolls.
+   The scrollbar then lives in the body alone and the strip spans the full width. */
+[data-platform="macos"] .dialog:has(> .dialog-body) {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 20px 0 0;
+}
+[data-platform="macos"] .dialog:has(> .dialog-body) > h2 { padding: 0 22px; }
+[data-platform="macos"] .dialog-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 2px 22px 14px;
+}
+[data-platform="macos"] .dialog-body > :last-child { margin-bottom: 0; }
+[data-platform="macos"] .dialog:has(> .dialog-body) > .dialog-actions {
+  flex: none;
+  margin: 0;
+  padding: 12px 22px 16px;
+  background: var(--glass);
+  border-top: 1px solid var(--glass-edge);
+}
+/* Short dialogs (no body wrapper): the actions simply close the dialog. */
+
+/* Buttons inside setting rows never wrap ("Open log folder"). */
+[data-platform="macos"] fieldset .field button { white-space: nowrap; flex-shrink: 0; }
+
+/* ---- Scrollbars ---------------------------------------------------------------------------
+   WebKit's overlay scrollbars only appear while scrolling, so a long dialog doesn't look
+   scrollable. A styled scrollbar is always shown: a thin translucent capsule (thicker on hover),
+   no track. Dialogs keep it clear of the rounded corners and the pinned action strip. */
+[data-platform="macos"] ::-webkit-scrollbar { width: 12px; height: 12px; background: transparent; }
+[data-platform="macos"] ::-webkit-scrollbar-track { background: transparent; }
+[data-platform="macos"] ::-webkit-scrollbar-corner { background: transparent; }
+[data-platform="macos"] ::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--text) 26%, transparent);
+  border: 3.5px solid transparent;
+  background-clip: padding-box;
+  border-radius: 999px;
+  min-height: 36px;
+}
+[data-platform="macos"] ::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in srgb, var(--text) 42%, transparent);
+  border-width: 2.5px;
+}
+/* Track inset: clear of the dialog's 18px corners / the body's top and bottom edges. */
+[data-platform="macos"] .dialog::-webkit-scrollbar-track { margin: 16px 0; }
+[data-platform="macos"] .dialog-body::-webkit-scrollbar-track { margin: 4px 0; }
+/* Content panels: keep the thumb off their 12px corners. */
+[data-platform="macos"] .table-wrap::-webkit-scrollbar-track,
+[data-platform="macos"] .detail::-webkit-scrollbar-track,
+[data-platform="macos"] main.scroll::-webkit-scrollbar-track { margin: 8px; }
+/* The sticky table header sits over the top of the table's scroll area. */
+[data-platform="macos"] .table-wrap::-webkit-scrollbar-track:vertical { margin-top: 36px; }
 
 /* ---- Accessibility ----------------------------------------------------------------------- */
 /* Reduce Transparency: the native glass turns opaque by itself; make every CSS layer opaque too. */
