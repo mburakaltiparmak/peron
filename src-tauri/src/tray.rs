@@ -1,11 +1,14 @@
 //! System tray and main-window lifecycle.
 //!
-//! Hiding to the tray *destroys* the window so WebView2's processes exit (~200 MB); showing it
-//! again recreates it from config. Clicking a port in the menu only asks the UI to open its kill
+//! Hiding to the tray *destroys* the window so the WebView's processes exit (WebView2 ~200 MB);
+//! showing it again recreates it from config. On macOS the tray is the menu bar extra, and the Dock
+//! icon is only shown while the window exists. Clicking a port in the menu only asks the UI to open its kill
 //! confirmation (never kills directly).
 
 use tauri::menu::{CheckMenuItem, Menu, MenuItem, PredefinedMenuItem, Submenu};
-use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
+use tauri::tray::TrayIconBuilder;
+#[cfg(not(target_os = "macos"))]
+use tauri::tray::{MouseButton, MouseButtonState, TrayIconEvent};
 use tauri::{AppHandle, Emitter, Manager, WebviewWindow, WebviewWindowBuilder, Wry};
 
 use crate::i18n::{self, Lang, Text};
@@ -24,7 +27,8 @@ pub fn create(app: &AppHandle) -> tauri::Result<()> {
     let mut builder = TrayIconBuilder::with_id(TRAY_ID)
         .tooltip("Peron")
         .menu(&menu)
-        .show_menu_on_left_click(false)
+        // macOS convention: a menu bar extra opens its menu on click ("Open Peron" is first).
+        .show_menu_on_left_click(cfg!(target_os = "macos"))
         .on_menu_event(|app, event| match event.id().as_ref() {
             "open" => show_main(app),
             "quit" => app.exit(0),
@@ -36,8 +40,11 @@ pub fn create(app: &AppHandle) -> tauri::Result<()> {
                     let _ = app.emit(REQUEST_KILL, entry_id);
                 }
             }
-        })
-        .on_tray_icon_event(|tray, event| {
+        });
+    // Elsewhere a left click toggles the window; the menu opens on right click.
+    #[cfg(not(target_os = "macos"))]
+    {
+        builder = builder.on_tray_icon_event(|tray, event| {
             if let TrayIconEvent::Click {
                 button: MouseButton::Left,
                 button_state: MouseButtonState::Up,
@@ -47,6 +54,15 @@ pub fn create(app: &AppHandle) -> tauri::Result<()> {
                 toggle_main(tray.app_handle());
             }
         });
+    }
+    // Menu bar icons are monochrome templates that macOS tints for light/dark menu bars.
+    #[cfg(target_os = "macos")]
+    {
+        builder = builder
+            .icon(tauri::include_image!("icons/tray-template.png"))
+            .icon_as_template(true);
+    }
+    #[cfg(not(target_os = "macos"))]
     if let Some(icon) = app.default_window_icon() {
         builder = builder.icon(icon.clone());
     }
@@ -211,6 +227,7 @@ fn create_main(app: &AppHandle) -> tauri::Result<WebviewWindow> {
 }
 
 pub fn show_main(app: &AppHandle) {
+    set_dock_icon(app, true);
     match app.get_webview_window(MAIN) {
         Some(w) => {
             let _ = w.unminimize();
@@ -231,9 +248,28 @@ pub fn hide_main(app: &AppHandle) {
     if let Some(w) = app.get_webview_window(MAIN) {
         let _ = w.destroy();
     }
+    set_dock_icon(app, false);
     app.state::<AppState>().wake_monitor();
 }
 
+/// macOS: a regular app (Dock icon, Cmd+Tab) while the window exists, menu bar only otherwise.
+pub fn set_dock_icon(app: &AppHandle, visible: bool) {
+    #[cfg(target_os = "macos")]
+    {
+        let policy = if visible {
+            tauri::ActivationPolicy::Regular
+        } else {
+            tauri::ActivationPolicy::Accessory
+        };
+        if let Err(e) = app.set_activation_policy(policy) {
+            crate::log_error!("activation policy: {e}");
+        }
+    }
+    #[cfg(not(target_os = "macos"))]
+    let _ = (app, visible);
+}
+
+#[cfg(not(target_os = "macos"))]
 fn toggle_main(app: &AppHandle) {
     let visible = app
         .get_webview_window(MAIN)

@@ -75,3 +75,18 @@ describe("SettingsDialog theme", () => {
     expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ theme: "dark" }));
   });
 });
+
+describe("SettingsDialog on macOS", () => {
+  it("names the menu bar and login instead of the tray and Windows, with ⌘ shortcuts", () => {
+    const platform = vi.spyOn(navigator, "platform", "get").mockReturnValue("MacIntel");
+    try {
+      render(<SettingsDialog settings={settings} language="en" channel="direct" onSave={vi.fn()} onCancel={vi.fn()} />);
+      expect(screen.getByLabelText(/Keep running in the menu bar|menü çubuğunda çalışmaya/)).toBeInTheDocument();
+      expect(screen.getByLabelText(/Start at login|Oturum açılınca/)).toBeInTheDocument();
+      expect(screen.getByText(/⌘F/)).toBeInTheDocument();
+      expect(screen.queryByText(/Windows/)).not.toBeInTheDocument();
+    } finally {
+      platform.mockRestore();
+    }
+  });
+});

@@ -4,15 +4,24 @@
 //!   toast as "Windows PowerShell" (what tauri-plugin-notification falls back to) or drops it. We
 //!   register `HKCU\Software\Classes\AppUserModelId\<id>` with a display name and icon.
 //! - Linux: freedesktop notifications via `notify-rust` (D-Bus), app name "Peron".
+//! - macOS: Notification Center via `notify-rust`, under the app's bundle identifier. Only a
+//!   bundled `.app` has one; `tauri dev` binaries fall back to a system app's identity. Clicking a
+//!   notification activates Peron, which `RunEvent::Reopen` turns into showing the window.
 
+#[cfg(not(target_os = "macos"))]
 use std::path::PathBuf;
 
-use tauri::{AppHandle, Manager};
+use tauri::AppHandle;
+#[cfg(not(target_os = "macos"))]
+use tauri::Manager;
 
+#[cfg(not(target_os = "macos"))]
 use crate::tray;
 
+#[cfg(not(target_os = "macos"))]
 const ICON_PNG: &[u8] = include_bytes!("../icons/128x128.png");
 
+#[cfg(not(target_os = "macos"))]
 fn write_icon(app: &AppHandle) -> Option<PathBuf> {
     let dir = app.path().app_local_data_dir().ok()?;
     std::fs::create_dir_all(&dir).ok()?;
@@ -23,6 +32,7 @@ fn write_icon(app: &AppHandle) -> Option<PathBuf> {
     Some(path)
 }
 
+#[cfg(not(target_os = "macos"))]
 fn open_main(app: &AppHandle) {
     let h = app.clone();
     // Notification callbacks run on foreign threads; window work belongs on the main thread.
@@ -54,6 +64,14 @@ pub fn register(app: &AppHandle) {
 pub fn register(app: &AppHandle) {
     // Nothing to register; just make sure the icon file exists for notifications.
     let _ = write_icon(app);
+}
+
+#[cfg(target_os = "macos")]
+pub fn register(app: &AppHandle) {
+    // Fails outside a bundled .app (no registered bundle id); notifications then still show.
+    if let Err(e) = notify_rust::set_application(&app.config().identifier) {
+        crate::log_error!("notification identity not set (unbundled?): {e}");
+    }
 }
 
 #[cfg(windows)]
@@ -97,5 +115,18 @@ pub fn show(app: &AppHandle, title: &str, body: &str) {
             });
         }
         Err(e) => crate::log_error!("notification failed: {e}"),
+    }
+}
+
+#[cfg(target_os = "macos")]
+pub fn show(_app: &AppHandle, title: &str, body: &str) {
+    // The icon is the app bundle's own; wait_for_action would need the main run loop, so the
+    // click is handled by app activation instead.
+    if let Err(e) = notify_rust::Notification::new()
+        .summary(title)
+        .body(body)
+        .show()
+    {
+        crate::log_error!("notification failed: {e}");
     }
 }

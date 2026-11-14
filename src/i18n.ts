@@ -118,7 +118,9 @@ const tr = {
   reminderRepeat: "Tekrar hatırlatma aralığı (dakika, 5–1440)",
   secStartup: "Başlangıç",
   closeToTray: "Pencere kapatılınca sistem tepsisinde çalışmaya devam et",
+  closeToTrayMac: "Pencere kapatılınca menü çubuğunda çalışmaya devam et",
   autostart: "Windows açılışında başlat (tepside)",
+  autostartMac: "Oturum açılınca başlat (menü çubuğunda)",
   secDiagnostics: "Tanılama",
   diagnosticsNote: "Sorun bildirimi için yerel bir günlük tutulur (en fazla ~1 MB, kişisel veri içermez).",
   openLogFolder: "Günlük klasörünü aç",
@@ -137,6 +139,7 @@ const tr = {
   privacyPolicy: "Gizlilik politikası",
   support: "Destek",
   shortcuts: "Kısayollar: Ctrl+F ara · F5 yenile · Delete seçili portu kapat · Esc kapat",
+  shortcutsMac: "Kısayollar: ⌘F ara · ⌘R yenile · ⌫ seçili portu kapat · Esc kapat",
   save: "Kaydet",
 
   tabPorts: "Portlar",
@@ -176,6 +179,7 @@ const tr = {
   email: "E-posta",
   version: (v: string) => `Sürüm ${v}`,
   limitedLinuxTitle: "Başka kullanıcılara ait portların sahibini görmek için Peron'u root olarak çalıştırın.",
+  limitedMacTitle: "Başka kullanıcılara ait süreçlerin (ör. sistem servisleri) portları gösterilmez; hepsini görmek için Peron'u sudo ile çalıştırın.",
 
   tabHistory: "Geçmiş",
   machine: "Makine",
@@ -349,7 +353,9 @@ const en: Dict = {
   reminderRepeat: "Remind again every (minutes, 5–1440)",
   secStartup: "Startup",
   closeToTray: "Keep running in the system tray when the window is closed",
+  closeToTrayMac: "Keep running in the menu bar when the window is closed",
   autostart: "Start with Windows (in the tray)",
+  autostartMac: "Start at login (in the menu bar)",
   secDiagnostics: "Diagnostics",
   diagnosticsNote: "A local log is kept for troubleshooting (max ~1 MB, no personal data).",
   openLogFolder: "Open log folder",
@@ -368,6 +374,7 @@ const en: Dict = {
   privacyPolicy: "Privacy policy",
   support: "Support",
   shortcuts: "Shortcuts: Ctrl+F search · F5 refresh · Delete close selected port · Esc close",
+  shortcutsMac: "Shortcuts: ⌘F search · ⌘R refresh · ⌫ close selected port · Esc close",
   save: "Save",
 
   tabPorts: "Ports",
@@ -407,6 +414,7 @@ const en: Dict = {
   email: "Email",
   version: (v: string) => `Version ${v}`,
   limitedLinuxTitle: "Run Peron as root to see the owners of ports that belong to other users.",
+  limitedMacTitle: "Ports of other users' processes (e.g. system services) are not shown; run Peron with sudo to see them all.",
 
   tabHistory: "History",
   machine: "Machine",

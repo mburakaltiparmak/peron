@@ -153,11 +153,11 @@ export interface AppInfo {
   /** Effective language: Settings choice → installer choice → OS language → English. */
   language: Lang;
   elevated: boolean;
-  /** Windows only: relaunch through UAC. On Linux the user runs Peron as root instead. */
+  /** Windows only: relaunch through UAC. On Linux/macOS the user runs Peron as root instead. */
   canElevate: boolean;
   /** "store" = MSIX from Microsoft Store (Store updates it); "direct" = site/GitHub packages. */
   channel: "store" | "direct";
-  platform: "windows" | "linux";
+  platform: "windows" | "linux" | "macos";
   /** e.g. "Windows 11 Home 10.0.26200" or "Ubuntu 24.04". */
   os: string;
   version: string;

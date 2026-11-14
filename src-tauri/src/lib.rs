@@ -37,6 +37,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(
             // The Run-key value name must stay "Peron": installer-hooks.nsh deletes it on uninstall.
+            // macOS: a LaunchAgent plist in ~/Library/LaunchAgents (the plugin's default).
             tauri_plugin_autostart::Builder::new()
                 .app_name("Peron")
                 .arg(MINIMIZED_ARG)
@@ -50,7 +51,9 @@ pub fn run() {
             notify::register(handle);
             tray::create(handle)?;
             // Autostart runs tray-only: no WebView is created until the user opens the window.
-            if !start_minimized {
+            if start_minimized {
+                tray::set_dock_icon(handle, false);
+            } else {
                 tray::show_main(handle);
             }
             monitor::spawn(handle.clone());
@@ -100,14 +103,19 @@ pub fn run() {
         .build(tauri::generate_context!())
         .expect("error while building tauri application");
 
-    app.run(|_app, event| {
+    app.run(|_app, event| match event {
         // The last window closing must not end the app; only an explicit exit (tray "Quit",
-        // close with close-to-tray off, relaunch) passes an exit code.
-        if let RunEvent::ExitRequested {
+        // close with close-to-tray off, relaunch) passes an exit code. macOS Cmd+Q terminates
+        // the process directly and never reaches this.
+        RunEvent::ExitRequested {
             code: None, api, ..
-        } = event
-        {
-            api.prevent_exit();
-        }
+        } => api.prevent_exit(),
+        // macOS: Dock icon or notification clicked while the window is closed.
+        #[cfg(target_os = "macos")]
+        RunEvent::Reopen {
+            has_visible_windows: false,
+            ..
+        } => tray::show_main(_app),
+        _ => {}
     });
 }

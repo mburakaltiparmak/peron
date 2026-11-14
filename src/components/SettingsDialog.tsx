@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useDialogFocus } from "../hooks/useDialogFocus";
 import { openLogFolder, toAppError } from "../api";
 import { errorText, useT } from "../i18n";
+import { isMac } from "../platform";
 import { applyTheme } from "../theme";
 import type { AppInfo, Lang, Settings, Theme } from "../types";
 
@@ -157,11 +158,11 @@ export function SettingsDialog({ settings, language, channel, onSave, onCancel }
           <legend>{t.secStartup}</legend>
           <label className="check">
             <input type="checkbox" checked={draft.closeToTray} onChange={(e) => set({ closeToTray: e.target.checked })} />
-            {t.closeToTray}
+            {isMac() ? t.closeToTrayMac : t.closeToTray}
           </label>
           <label className="check">
             <input type="checkbox" checked={draft.autostart} onChange={(e) => set({ autostart: e.target.checked })} />
-            {t.autostart}
+            {isMac() ? t.autostartMac : t.autostart}
           </label>
           {channel === "direct" && (
             <label className="check">
@@ -181,7 +182,7 @@ export function SettingsDialog({ settings, language, channel, onSave, onCancel }
           </div>
         </fieldset>
 
-        <p className="muted small">{t.shortcuts}</p>
+        <p className="muted small">{isMac() ? t.shortcutsMac : t.shortcuts}</p>
 
         {error && <div className="error">{error}</div>}
 

@@ -1,6 +1,7 @@
 //! Start with the OS, per distribution channel:
 //! - MSIX (Microsoft Store): the package's `StartupTask` (HKCU\Run writes are virtualized there).
-//! - NSIS / Linux: tauri-plugin-autostart (Run key / XDG autostart entry) with `--minimized`.
+//! - NSIS / Linux / macOS: tauri-plugin-autostart (Run key / XDG autostart entry / LaunchAgent)
+//!   with `--minimized`.
 
 use tauri::AppHandle;
 use tauri_plugin_autostart::ManagerExt;
@@ -32,12 +33,10 @@ pub fn set(app: &AppHandle, enable: bool) -> AppResult<()> {
 
 /// Whether this launch came from autostart (then Peron starts tray-only, without a window).
 pub fn launched_at_login(args: &[String], minimized_arg: &str) -> bool {
-    if args.iter().any(|a| a == minimized_arg) {
-        return true;
-    }
+    let by_arg = args.iter().any(|a| a == minimized_arg);
     #[cfg(windows)]
-    if crate::platform::is_packaged() {
+    if !by_arg && crate::platform::is_packaged() {
         return crate::platform::launched_by_startup_task();
     }
-    false
+    by_arg
 }

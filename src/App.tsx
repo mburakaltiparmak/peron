@@ -30,6 +30,7 @@ import { prereleaseLabel } from "./format";
 import { useNow, usePorts } from "./hooks/usePorts";
 import { useRemotePorts } from "./hooks/useRemotePorts";
 import { dictionaries, errorText, I18nContext } from "./i18n";
+import { isMac } from "./platform";
 import type { AppInfo, ExportFormat, ExportResult, ModeInfo, PortEntry, Settings } from "./types";
 import { applyTheme } from "./theme";
 import { checkForUpdate, dismissUpdate, type Update } from "./updates";
@@ -199,21 +200,25 @@ export default function App() {
   const selected = visible.find((p) => p.id === selectedId) ?? ports.find((p) => p.id === selectedId) ?? null;
   const samePid = (pid: number) => ports.filter((p) => p.pid === pid);
 
-  // Keyboard shortcuts. F5/Ctrl+R would reload the WebView, so they are always intercepted.
+  // Keyboard shortcuts. F5/Ctrl+R (Cmd+R on macOS) would reload the WebView, so they are always
+  // intercepted. The Mac keyboard's "delete" key reports Backspace.
   useEffect(() => {
+    const mac = isMac();
     const onKey = (e: KeyboardEvent) => {
       const typing =
         e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement || e.target instanceof HTMLTextAreaElement;
-      if (e.key === "F5" || (e.ctrlKey && e.key.toLowerCase() === "r")) {
+      const mod = e.ctrlKey || (mac && e.metaKey);
+      const del = e.key === "Delete" || (mac && e.key === "Backspace");
+      if (e.key === "F5" || (mod && e.key.toLowerCase() === "r")) {
         e.preventDefault();
         if (tab === "ports") refresh();
       } else if (tab !== "ports") {
         return;
-      } else if (e.ctrlKey && e.key.toLowerCase() === "f") {
+      } else if (mod && e.key.toLowerCase() === "f") {
         e.preventDefault();
         searchRef.current?.focus();
         searchRef.current?.select();
-      } else if (e.key === "Delete" && !typing && selected && !selected.isProtected && !killTarget) {
+      } else if (del && !typing && selected && !selected.isProtected && !killTarget) {
         setKillTarget(selected);
       } else if (e.key === "Escape" && !killTarget && !showSettings && !showServers) {
         if (typing && search) setSearch("");
@@ -372,7 +377,15 @@ export default function App() {
             <span className={`dot ${!isRemote && mode?.mode === "active" && settings.autoRefresh ? "live" : ""}`} /> {modeLabel}
             {updatedAt ? ` · ${t.updatedAt(new Date(updatedAt).toLocaleTimeString(t.locale))}` : ""}
             {!elevated && (
-              <span title={info.platform === "linux" || isRemote ? t.limitedLinuxTitle : t.adminTitle}> · {t.limited}</span>
+              <span
+                title={
+                  info.platform === "linux" || isRemote
+                    ? t.limitedLinuxTitle
+                    : info.platform === "macos"
+                      ? t.limitedMacTitle
+                      : t.adminTitle
+                }
+              > · {t.limited}</span>
             )}
             {` · v${info.version} · `}
             {t.developer}:{" "}
