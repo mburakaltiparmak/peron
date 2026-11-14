@@ -15,7 +15,7 @@ repository = "https://github.com/mburakaltiparmak/peron"
 
 [package]
 name = "peron"
-description = "Localhost port manager for Windows and Linux"
+description = "Localhost port manager for Windows, Linux and macOS"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -46,7 +46,7 @@ sysinfo = { version = "0.39.6", default-features = false, features = ["system"] 
 [target.'cfg(windows)'.dependencies]
 tauri-winrt-notification = "0.7"
 
-[target.'cfg(target_os = "linux")'.dependencies]
+[target.'cfg(unix)'.dependencies]
 notify-rust = "4"
 
 

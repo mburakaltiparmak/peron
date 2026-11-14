@@ -32,7 +32,7 @@ fn terminate(pid: u32) -> AppResult<()> {
 }
 
 /// SIGTERM first so dev servers can shut down cleanly; SIGKILL if still alive after 1.5 s.
-#[cfg(target_os = "linux")]
+#[cfg(unix)]
 fn terminate(pid: u32) -> AppResult<()> {
     fn signal(pid: u32, sig: libc::c_int) -> AppResult<()> {
         // SAFETY: kill(2) has no memory-safety preconditions.
@@ -45,12 +45,11 @@ fn terminate(pid: u32) -> AppResult<()> {
             _ => AppError::Other(std::io::Error::last_os_error().to_string()),
         })
     }
-    let alive = || std::path::Path::new(&format!("/proc/{pid}")).exists() && !is_zombie(pid);
 
     signal(pid, libc::SIGTERM)?;
     for _ in 0..15 {
         std::thread::sleep(std::time::Duration::from_millis(100));
-        if !alive() {
+        if !alive(pid) {
             return Ok(());
         }
     }
@@ -60,16 +59,43 @@ fn terminate(pid: u32) -> AppResult<()> {
     }
 }
 
-/// An exited child that its parent hasn't reaped yet still has a /proc entry (state `Z`).
+/// Still running. An exited child its parent hasn't reaped yet (a zombie) counts as gone.
 #[cfg(target_os = "linux")]
-fn is_zombie(pid: u32) -> bool {
-    std::fs::read_to_string(format!("/proc/{pid}/stat"))
+fn alive(pid: u32) -> bool {
+    // A zombie still has a /proc entry, with state `Z`.
+    let zombie = std::fs::read_to_string(format!("/proc/{pid}/stat"))
         .ok()
         .and_then(|s| {
             s.rsplit_once(')')
                 .map(|(_, rest)| rest.trim_start().starts_with('Z'))
         })
-        .unwrap_or(false)
+        .unwrap_or(false);
+    std::path::Path::new(&format!("/proc/{pid}")).exists() && !zombie
+}
+
+/// Still running. An exited child its parent hasn't reaped yet (a zombie) counts as gone.
+#[cfg(target_os = "macos")]
+fn alive(pid: u32) -> bool {
+    let mut info = std::mem::MaybeUninit::<libc::proc_bsdinfo>::zeroed();
+    let size = std::mem::size_of::<libc::proc_bsdinfo>() as libc::c_int;
+    // SAFETY: the buffer is exactly one `proc_bsdinfo`; all-zero bytes are a valid value.
+    let n = unsafe {
+        libc::proc_pidinfo(
+            pid as libc::c_int,
+            libc::PROC_PIDTBSDINFO,
+            0,
+            info.as_mut_ptr().cast(),
+            size,
+        )
+    };
+    if n != size {
+        // No info: gone, or not ours to inspect — then ask kill(2), which tells the two apart.
+        // SAFETY: signal 0 only checks existence and permission.
+        return unsafe { libc::kill(pid as libc::pid_t, 0) } == 0
+            || std::io::Error::last_os_error().raw_os_error() == Some(libc::EPERM);
+    }
+    // SAFETY: fully written by the kernel (n == size).
+    unsafe { info.assume_init() }.pbi_status != libc::SZOMB
 }
 
 #[derive(Debug, Serialize)]
@@ -143,7 +169,7 @@ mod tests {
     fn refuses_protected_and_stale_pid() {
         let mut sys = System::new();
         info::refresh_all_light(&mut sys);
-        // Windows "System" is PID 4; on Linux PID 1 (init / container entrypoint) always exists.
+        // Windows "System" is PID 4; on Linux/macOS PID 1 (init, launchd) always exists.
         let protected_pid = if cfg!(windows) { 4 } else { 1 };
         let system_start = start_ms(&sys, protected_pid);
         assert!(matches!(

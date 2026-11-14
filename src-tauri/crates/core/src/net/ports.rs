@@ -1,4 +1,4 @@
-//! Platform-neutral socket model; the OS-specific scanners live in `windows.rs` / `linux.rs`.
+//! Platform-neutral socket model; the OS-specific scanners live in `windows.rs` / `linux.rs` / `macos.rs`.
 
 use std::net::IpAddr;
 
@@ -23,8 +23,9 @@ pub struct RawSocket {
     /// TCP state name; `None` for UDP.
     pub state: Option<&'static str>,
     /// Owning process; 0 when unknown (Linux: socket owned by another user without root).
+    /// macOS never reports 0: sockets of processes it can't inspect are not listed at all.
     pub pid: u32,
-    /// Socket creation time, Unix ms. Windows only (`liCreateTimestamp`); Linux has no equivalent.
+    /// Socket creation time, Unix ms. Windows only (`liCreateTimestamp`); Linux/macOS have no equivalent.
     pub created_at_ms: Option<i64>,
 }
 
@@ -34,6 +35,8 @@ pub fn scan_all() -> AppResult<Vec<RawSocket>> {
     return super::windows::scan();
     #[cfg(target_os = "linux")]
     return super::linux::scan();
+    #[cfg(target_os = "macos")]
+    return super::macos::scan();
 }
 
 #[cfg(test)]

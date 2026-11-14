@@ -25,8 +25,3 @@ pub fn ui_language_is_turkish() -> bool {
 pub fn is_packaged() -> bool {
     false
 }
-
-pub fn is_root() -> bool {
-    // SAFETY: geteuid has no preconditions and cannot fail.
-    unsafe { libc::geteuid() == 0 }
-}

@@ -1,6 +1,7 @@
 //! Elevation helpers. The Windows manifest stays `asInvoker`; elevation is always user-initiated.
 //! On Linux there is no in-app elevation (GUI apps under pkexec/sudo are unreliable on Wayland);
-//! the UI tells the user to start Peron as root instead.
+//! the UI tells the user to start Peron as root instead. macOS behaves the same: GUI apps are
+//! not meant to run as root, so Peron shows the current user's ports.
 
 use crate::error::{AppError, AppResult};
 
@@ -20,7 +21,7 @@ pub fn is_elevated() -> bool {
     unsafe { windows::Win32::UI::Shell::IsUserAnAdmin().as_bool() }
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(unix)]
 pub fn is_elevated() -> bool {
     crate::platform::is_root()
 }
@@ -55,9 +56,9 @@ pub fn relaunch_as_admin() -> AppResult<()> {
     Ok(())
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(unix)]
 pub fn relaunch_as_admin() -> AppResult<()> {
     Err(AppError::Other(
-        "Not supported on Linux; start Peron as root.".into(),
+        "Not supported on Linux/macOS; start Peron as root.".into(),
     ))
 }

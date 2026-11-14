@@ -77,6 +77,41 @@ const KNOWN_SYSTEM: &[&str] = &[
     "kdeconnectd",
 ];
 
+/// macOS: kernel, launchd, the window server and login/session daemons whose loss logs the user
+/// out or breaks the desktop. Lower-case; names are compared case-insensitively.
+#[cfg(target_os = "macos")]
+const PROTECTED: &[&str] = &[
+    "kernel_task",
+    "launchd",
+    "windowserver",
+    "loginwindow",
+    "configd",
+    "opendirectoryd",
+    "coreservicesd",
+    "securityd",
+    "trustd",
+    "logd",
+    "notifyd",
+    "distnoted",
+    "cfprefsd",
+    "usereventagent",
+    "mdnsresponder",
+    "dock",
+    "finder",
+    "systemuiserver",
+];
+
+/// macOS daemons that are part of the OS but safe to list as "system" (hidden by default).
+/// ControlCenter holds the AirPlay Receiver ports 5000/7000 that often clash with dev servers.
+#[cfg(target_os = "macos")]
+const KNOWN_SYSTEM: &[&str] = &[
+    "controlcenter",
+    "rapportd",
+    "sharingd",
+    "identityservicesd",
+    "remoted",
+];
+
 const DEV: &[&str] = &[
     "docker-proxy",
     "php-fpm",
@@ -132,6 +167,7 @@ fn stem(name: &str) -> String {
 }
 
 /// PID 0 is also "unknown owner" (Linux without root), which must never be killable either.
+/// On macOS PID 0 is `kernel_task` and PID 1 `launchd`.
 pub fn is_protected(pid: u32, name: &str) -> bool {
     let n = lower(name);
     #[cfg(target_os = "linux")]
@@ -167,6 +203,20 @@ fn is_system_path(exe: &str) -> bool {
     .any(|p| exe.starts_with(p))
 }
 
+/// `exe` is already lower-case. `/System/` also covers apps on the sealed system volume.
+#[cfg(target_os = "macos")]
+fn is_system_path(exe: &str) -> bool {
+    [
+        "/system/",
+        "/usr/libexec/",
+        "/usr/sbin/",
+        "/sbin/",
+        "/library/apple/",
+    ]
+    .iter()
+    .any(|p| exe.starts_with(p))
+}
+
 pub fn is_dev(name: &str) -> bool {
     DEV.contains(&stem(name).as_str())
 }
@@ -190,6 +240,30 @@ mod tests {
             Some("/home/u/.nvm/versions/node/v22/bin/node")
         ));
         assert!(is_dev("node") && is_dev("python3") && is_dev("docker-proxy"));
+    }
+
+    #[cfg(target_os = "macos")]
+    #[test]
+    fn macos() {
+        assert!(is_protected(0, "kernel_task"));
+        assert!(is_protected(1, "launchd"));
+        assert!(is_protected(900, "WindowServer"));
+        assert!(is_protected(900, "mDNSResponder"));
+        assert!(!is_protected(900, "node"));
+        assert!(!is_protected(900, "ControlCenter"));
+        assert!(is_system(900, "ControlCenter", None));
+        assert!(is_system(
+            900,
+            "foo",
+            Some("/System/Library/CoreServices/foo.app/Contents/MacOS/foo")
+        ));
+        assert!(is_system(900, "foo", Some("/usr/libexec/foo")));
+        assert!(!is_system(900, "node", Some("/opt/homebrew/bin/node")));
+        assert!(!is_system(
+            900,
+            "Code Helper",
+            Some("/Applications/Visual Studio Code.app/x")
+        ));
     }
 
     #[cfg(windows)]
