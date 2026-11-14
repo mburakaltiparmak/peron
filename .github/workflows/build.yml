@@ -1,8 +1,9 @@
 # Builds, tests and packages Peron.
-# - Push / PR: lint + tests (Rust + UI) on Windows and Linux, bundles uploaded as artifacts,
-#   plus the Microsoft Store MSIX (Windows).
+# - Push / PR: lint + tests (Rust + UI) on Windows, Linux and macOS (Apple Silicon), bundles uploaded
+#   as artifacts, plus the Microsoft Store MSIX (Windows).
 # - Tags "v*": a separate, write-permitted job drafts a GitHub release with the direct-download
-#   installers (NSIS, deb, rpm, AppImage). Tags with "-" (v0.1.0-beta.1) become pre-releases.
+#   installers (NSIS, deb, rpm, AppImage, dmg). Tags with "-" (v0.1.0-beta.1) become pre-releases.
+#   The macOS .dmg is ad-hoc signed, not notarized (no Apple Developer ID); README explains opening it.
 #   Release asset URLs never change once published → use them as the Partner Center / site links.
 #
 # Secrets:   WEB3FORMS_FORM_ACCESS_KEY  (feedback form; without it the form falls back to mailto)
@@ -36,6 +37,8 @@ jobs:
             name: windows
           - os: ubuntu-22.04
             name: linux
+          - os: macos-latest
+            name: macos
     runs-on: ${{ matrix.os }}
     env:
       WEB3FORMS_FORM_ACCESS_KEY: ${{ secrets.WEB3FORMS_FORM_ACCESS_KEY }}
@@ -88,6 +91,9 @@ jobs:
             cargo build --manifest-path src-tauri/Cargo.toml --release -p peron-cli --target x86_64-unknown-linux-musl
             cp src-tauri/target/x86_64-unknown-linux-musl/release/peron-cli src-tauri/bin/peron-cli
             cp src-tauri/bin/peron-cli dist-cli/peron-cli-x86_64-linux
+          elif [ "${{ matrix.name }}" = "macos" ]; then
+            cargo build --manifest-path src-tauri/Cargo.toml --release -p peron-cli
+            cp src-tauri/target/release/peron-cli dist-cli/peron-cli-aarch64-macos
           else
             cargo build --manifest-path src-tauri/Cargo.toml --release -p peron-cli
             cp src-tauri/target/release/peron-cli.exe dist-cli/peron-cli-x86_64-windows.exe
@@ -106,6 +112,7 @@ jobs:
             src-tauri/target/release/bundle/deb/*.deb
             src-tauri/target/release/bundle/rpm/*.rpm
             src-tauri/target/release/bundle/appimage/*.AppImage
+            src-tauri/target/release/bundle/dmg/*.dmg
             dist-cli/*
           if-no-files-found: error
 
@@ -154,7 +161,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-22.04]
+        os: [windows-latest, ubuntu-22.04, macos-latest]
     runs-on: ${{ matrix.os }}
     env:
       WEB3FORMS_FORM_ACCESS_KEY: ${{ secrets.WEB3FORMS_FORM_ACCESS_KEY }}
@@ -191,6 +198,9 @@ jobs:
             cargo build --manifest-path src-tauri/Cargo.toml --release -p peron-cli --target x86_64-unknown-linux-musl
             cp src-tauri/target/x86_64-unknown-linux-musl/release/peron-cli src-tauri/bin/peron-cli
             cp src-tauri/bin/peron-cli dist-cli/peron-cli-x86_64-linux
+          elif [ "$RUNNER_OS" = "macOS" ]; then
+            cargo build --manifest-path src-tauri/Cargo.toml --release -p peron-cli
+            cp src-tauri/target/release/peron-cli dist-cli/peron-cli-aarch64-macos
           else
             cargo build --manifest-path src-tauri/Cargo.toml --release -p peron-cli
             cp src-tauri/target/release/peron-cli.exe dist-cli/peron-cli-x86_64-windows.exe
@@ -204,7 +214,7 @@ jobs:
         with:
           tagName: ${{ github.ref_name }}
           releaseName: Peron ${{ github.ref_name }}
-          releaseBody: See CHANGELOG.md. Microsoft Store users are updated through the Store.
+          releaseBody: See CHANGELOG.md. Microsoft Store users are updated through the Store. The macOS .dmg is not notarized; see the README for how to open it the first time.
           releaseDraft: true
           prerelease: ${{ contains(github.ref_name, '-') }}
 
