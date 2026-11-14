@@ -2539,6 +2539,8 @@ name = "peron"
 version = "0.1.0-beta.1"
 dependencies = [
  "notify-rust",
+ "objc2",
+ "objc2-app-kit",
  "peron-core",
  "serde",
  "serde_json",

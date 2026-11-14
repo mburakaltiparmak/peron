@@ -1,6 +1,8 @@
 mod autostart;
 mod commands;
 mod feedback;
+#[cfg(target_os = "macos")]
+mod glass;
 mod history_store;
 pub mod log;
 mod monitor;

@@ -215,6 +215,7 @@ fn create_main(app: &AppHandle) -> tauri::Result<WebviewWindow> {
     let window = WebviewWindowBuilder::from_config(app, &config)?
         .theme(theme)
         .build()?;
+    apply_glass(app, &window);
     let fallback = window.clone();
     std::thread::spawn(move || {
         std::thread::sleep(std::time::Duration::from_millis(2000));
@@ -250,6 +251,26 @@ pub fn hide_main(app: &AppHandle) {
     }
     set_dock_icon(app, false);
     app.state::<AppState>().wake_monitor();
+}
+
+/// macOS: puts the system glass behind the (transparent) WebView. Liquid Glass on macOS 26+,
+/// the classic sidebar vibrancy before. Purely cosmetic: if neither is available the window gets an
+/// opaque background instead.
+fn apply_glass(app: &AppHandle, window: &WebviewWindow) {
+    #[cfg(target_os = "macos")]
+    {
+        let w = window.clone();
+        // AppKit views may only be touched on the main thread; show_main has several callers.
+        let _ = app.run_on_main_thread(move || {
+            if let Err(e) = crate::glass::apply(&w) {
+                crate::log_error!("window glass unavailable: {e}");
+                // A transparent window without a material would show the desktop unblurred.
+                let _ = w.set_background_color(Some(tauri::window::Color(236, 236, 236, 255)));
+            }
+        });
+    }
+    #[cfg(not(target_os = "macos"))]
+    let _ = (app, window);
 }
 
 /// macOS: a regular app (Dock icon, Cmd+Tab) while the window exists, menu bar only otherwise.

@@ -35,7 +35,8 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 peron-core = { path = "crates/core" }
-tauri = { version = "2", features = ["tray-icon"] }
+# macos-private-api: transparent window over native glass (macOS); compiled out elsewhere.
+tauri = { version = "2", features = ["tray-icon", "macos-private-api"] }
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -48,6 +49,12 @@ tauri-winrt-notification = "0.7"
 
 [target.'cfg(unix)'.dependencies]
 notify-rust = "4"
+
+# Native glass behind the WebView (src/glass.rs). Same versions Tauri already uses; window-vibrancy
+# 0.7 is not used because it clashes with Tauri's 0.6 (both register NSVisualEffectViewTagged).
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6"
+objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "NSResponder", "NSView", "NSWindow", "NSGraphics", "NSGlassEffectView", "NSVisualEffectView", "objc2-core-foundation"] }
 
 
 # Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration

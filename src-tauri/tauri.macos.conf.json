@@ -1,5 +1,23 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Peron",
+        "width": 1180,
+        "height": 720,
+        "minWidth": 820,
+        "minHeight": 480,
+        "visible": false,
+        "create": false,
+        "transparent": true,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "trafficLightPosition": { "x": 18, "y": 24 }
+      }
+    ]
+  },
   "bundle": {
     "targets": ["app"],
     "category": "DeveloperTool",
