@@ -4,7 +4,7 @@ All notable changes to Peron. Versions follow [SemVer](https://semver.org/); pre
 tagged `vX.Y.Z-beta.N`. The Microsoft Store package uses the mapped MSIX version shown in
 parentheses (see `packaging/msix/build-msix.ps1`).
 
-## [Unreleased]
+## [0.1.0-beta.2] — Unreleased (MSIX 0.1.2.0)
 
 ### Added
 - **macOS (Apple Silicon, macOS 11+)**: `.dmg` on GitHub Releases, ad-hoc signed and not notarized

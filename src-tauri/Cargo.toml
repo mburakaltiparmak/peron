@@ -6,7 +6,7 @@
 members = [".", "crates/core", "crates/cli"]
 
 [workspace.package]
-version = "0.1.0-beta.1"
+version = "0.1.0-beta.2"
 edition = "2021"
 authors = ["M. Burak Altıparmak <mburakaltiparmak@gmail.com>"]
 homepage = "https://burakaltiparmak.dev"
