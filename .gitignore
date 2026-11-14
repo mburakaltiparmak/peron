@@ -37,6 +37,3 @@ dist-linux/
 
 # Static peron-cli staged for the Linux .deb/.rpm (docker/linux-build.sh)
 src-tauri/bin/
-
-# macOS icon produced by `tauri icon` (no macOS target)
-src-tauri/icons/icon.icns
