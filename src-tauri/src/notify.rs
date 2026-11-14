@@ -4,9 +4,10 @@
 //!   toast as "Windows PowerShell" (what tauri-plugin-notification falls back to) or drops it. We
 //!   register `HKCU\Software\Classes\AppUserModelId\<id>` with a display name and icon.
 //! - Linux: freedesktop notifications via `notify-rust` (D-Bus), app name "Peron".
-//! - macOS: Notification Center via `notify-rust`, under the app's bundle identifier. Only a
-//!   bundled `.app` has one; `tauri dev` binaries fall back to a system app's identity. Clicking a
-//!   notification activates Peron, which `RunEvent::Reopen` turns into showing the window.
+//! - macOS: `UNUserNotificationCenter` via `notify-rust` (`preview-macos-un`; the default
+//!   NSUserNotificationCenter path is deprecated and silently drops notifications on current
+//!   macOS). Needs the bundled `.app` (a bundle identifier) and the user's permission, requested
+//!   once at start; in `tauri dev` notifications are skipped.
 
 #[cfg(not(target_os = "macos"))]
 use std::path::PathBuf;
@@ -15,7 +16,6 @@ use tauri::AppHandle;
 #[cfg(not(target_os = "macos"))]
 use tauri::Manager;
 
-#[cfg(not(target_os = "macos"))]
 use crate::tray;
 
 #[cfg(not(target_os = "macos"))]
@@ -32,7 +32,6 @@ fn write_icon(app: &AppHandle) -> Option<PathBuf> {
     Some(path)
 }
 
-#[cfg(not(target_os = "macos"))]
 fn open_main(app: &AppHandle) {
     let h = app.clone();
     // Notification callbacks run on foreign threads; window work belongs on the main thread.
@@ -66,12 +65,18 @@ pub fn register(app: &AppHandle) {
     let _ = write_icon(app);
 }
 
+/// Asks for notification permission (macOS shows its prompt only the first time and remembers the
+/// answer). Off the main thread: the request blocks until macOS replies.
 #[cfg(target_os = "macos")]
-pub fn register(app: &AppHandle) {
-    // Fails outside a bundled .app (no registered bundle id); notifications then still show.
-    if let Err(e) = notify_rust::set_application(&app.config().identifier) {
-        crate::log_error!("notification identity not set (unbundled?): {e}");
+pub fn register(_app: &AppHandle) {
+    if notify_rust::check_bundle().is_err() {
+        return; // `tauri dev`: no bundle identifier, UNUserNotificationCenter would abort
     }
+    std::thread::spawn(|| match notify_rust::request_auth_blocking() {
+        Ok(true) => {}
+        Ok(false) => crate::log_error!("notifications not allowed in System Settings"),
+        Err(e) => crate::log_error!("notification permission request failed: {e}"),
+    });
 }
 
 #[cfg(windows)]
@@ -119,14 +124,24 @@ pub fn show(app: &AppHandle, title: &str, body: &str) {
 }
 
 #[cfg(target_os = "macos")]
-pub fn show(_app: &AppHandle, title: &str, body: &str) {
-    // The icon is the app bundle's own; wait_for_action would need the main run loop, so the
-    // click is handled by app activation instead.
-    if let Err(e) = notify_rust::Notification::new()
-        .summary(title)
-        .body(body)
-        .show()
-    {
-        crate::log_error!("notification failed: {e}");
+pub fn show(app: &AppHandle, title: &str, body: &str) {
+    if notify_rust::check_bundle().is_err() {
+        return;
+    }
+    // The icon is the app bundle's own. Clicking the notification body reports "default".
+    match notify_rust::Notification::new().summary(title).body(body).show() {
+        Ok(handle) => {
+            let app = app.clone();
+            // Blocks this thread until the user clicks or dismisses; responses arrive through the
+            // main run loop, which Tauri keeps running.
+            std::thread::spawn(move || {
+                handle.wait_for_action(|action| {
+                    if action == "default" {
+                        open_main(&app);
+                    }
+                })
+            });
+        }
+        Err(e) => crate::log_error!("notification failed: {e}"),
     }
 }

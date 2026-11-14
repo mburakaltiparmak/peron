@@ -21,7 +21,7 @@ Her testin adımları, beklenen sonucu ve son durumu burada tutulur. Yayın önc
 | 11 | macOS: port listesi ve kapatma | ✅ | 2026-11-15: `lsof` ile birebir; `python3 -m http.server` kapatıldı |
 | 12 | macOS: menü çubuğu, Dock, kısayollar, çıkış | ✅ | 2026-11-15 |
 | 13 | macOS: oturum açılınca başlatma | ✅ | 2026-11-15: LaunchAgent plist doğrulandı |
-| 14 | macOS: bildirimler | ⏳ | — |
+| 14 | macOS: bildirimler | ✅ | 2026-11-15: "ağdan erişilebilir" bildirimi geldi (UNUserNotificationCenter); tıklama ve hatırlatma (adım 2–3) bekliyor |
 | 15 | macOS: cam arayüzü (açık/koyu) | ✅ | 2026-11-15: ana pencere; Ayarlar diyaloğu ve menüler göz kontrolü bekliyor |
 | 16 | macOS: erişilebilirlik (VoiceOver, Saydamlığı azalt, Karşıtlığı artır) | ⏳ | — |
 | 17 | macOS 11–25 (Liquid Glass öncesi görünüm) | ⏳ | Cihaz yok |

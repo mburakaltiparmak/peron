@@ -48,7 +48,7 @@ sysinfo = { version = "0.39.6", default-features = false, features = ["system"] 
 tauri-winrt-notification = "0.7"
 
 [target.'cfg(unix)'.dependencies]
-notify-rust = "4"
+notify-rust = { version = "4", features = ["preview-macos-un"] }
 
 # Native glass behind the WebView (src/glass.rs). Same versions Tauri already uses; window-vibrancy
 # 0.7 is not used because it clashes with Tauri's 0.6 (both register NSVisualEffectViewTagged).
