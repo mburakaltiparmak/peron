@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import { useT } from "../i18n";
+import { dragRegion } from "../platform";
 import type { ExportFormat, Settings, ViewMode } from "../types";
 import { ExportMenu } from "./ExportMenu";
 import { LOCAL } from "./FilterBar";
@@ -39,8 +40,8 @@ export const Toolbar = forwardRef<HTMLInputElement, Props>(function Toolbar(p, s
     ["contact", t.tabContact],
   ];
   return (
-    <header className="toolbar">
-      <div className="brand">
+    <header className="toolbar" {...dragRegion()}>
+      <div className="brand" {...dragRegion()}>
         <img src="/logo.png" alt="" width={24} height={24} />
         {p.prerelease && <span className="beta-badge">{p.prerelease}</span>}
       </div>
@@ -82,7 +83,7 @@ export const Toolbar = forwardRef<HTMLInputElement, Props>(function Toolbar(p, s
         </>
       )}
 
-      <div className="spacer" />
+      <div className="spacer" {...dragRegion()} />
 
       {p.showAdmin && p.host === LOCAL && (
         <button className="ghost" onClick={p.onRelaunchAdmin} title={t.adminTitle}>

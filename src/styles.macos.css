@@ -1,0 +1,304 @@
+/* macOS look (Liquid Glass era). Every rule is scoped to [data-platform="macos"], set in main.tsx,
+ * so Windows and Linux keep styles.css untouched.
+ *
+ * Layers, following Apple's guidance that glass is for navigation, never for content:
+ *   1. Window: native system glass behind a transparent WebView (src-tauri/src/tray.rs, apply_glass).
+ *   2. Chrome (toolbar, filter bar, status bar): no background of their own; the glass shows through.
+ *   3. Content (port table, detail, history, contact): a solid-enough rounded panel for legibility.
+ *   4. Floating (menus, dialogs, toast): CSS glass (backdrop blur) with a specular top edge.
+ * Radii are concentric: window ~16, content panel 12, dialog 18, menu 12, controls capsule. */
+
+/* ---- Tokens: light ---------------------------------------------------------------------- */
+:root[data-platform="macos"] {
+  --bg: transparent;
+  --surface: rgba(255, 255, 255, 0.78);
+  --surface-2: rgba(0, 0, 0, 0.05);
+  --surface-solid: #ffffff;
+  --border: rgba(0, 0, 0, 0.1);
+  --text: #1d1d1f;
+  --muted: #6e6e73;
+  --accent-fallback: #0a7aff;
+  --danger: #d70015;
+  --warn: #b25000;
+  --ok: #1f8a3c;
+  --control: rgba(255, 255, 255, 0.55);
+  --control-hover: rgba(255, 255, 255, 0.85);
+  --glass: rgba(246, 246, 248, 0.62);
+  --glass-edge: rgba(0, 0, 0, 0.1);
+  --glass-highlight: rgba(255, 255, 255, 0.75);
+  --shadow: 0 10px 34px rgba(0, 0, 0, 0.16), 0 1px 3px rgba(0, 0, 0, 0.08);
+  --header: rgba(250, 250, 252, 0.86);
+  color-scheme: light;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Tokens: dark (OS preference unless forced light, or forced dark) --------------------- */
+@media (prefers-color-scheme: dark) {
+  :root[data-platform="macos"]:not([data-theme="light"]) {
+    --surface: rgba(32, 32, 35, 0.74);
+    --surface-2: rgba(255, 255, 255, 0.07);
+    --surface-solid: #2a2a2d;
+    --border: rgba(255, 255, 255, 0.1);
+    --text: #f5f5f7;
+    --muted: #a1a1a6;
+    --accent-fallback: #0a84ff;
+    --danger: #ff6961;
+    --warn: #ffb340;
+    --ok: #32d74b;
+    --control: rgba(255, 255, 255, 0.08);
+    --control-hover: rgba(255, 255, 255, 0.14);
+    --glass: rgba(44, 44, 48, 0.6);
+    --glass-edge: rgba(255, 255, 255, 0.12);
+    --glass-highlight: rgba(255, 255, 255, 0.14);
+    --shadow: 0 12px 36px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
+    --header: rgba(38, 38, 41, 0.9);
+    color-scheme: dark;
+  }
+}
+:root[data-platform="macos"][data-theme="dark"] {
+  --surface: rgba(32, 32, 35, 0.74);
+  --surface-2: rgba(255, 255, 255, 0.07);
+  --surface-solid: #2a2a2d;
+  --border: rgba(255, 255, 255, 0.1);
+  --text: #f5f5f7;
+  --muted: #a1a1a6;
+  --accent-fallback: #0a84ff;
+  --danger: #ff6961;
+  --warn: #ffb340;
+  --ok: #32d74b;
+  --control: rgba(255, 255, 255, 0.08);
+  --control-hover: rgba(255, 255, 255, 0.14);
+  --glass: rgba(44, 44, 48, 0.6);
+  --glass-edge: rgba(255, 255, 255, 0.12);
+  --glass-highlight: rgba(255, 255, 255, 0.14);
+  --shadow: 0 12px 36px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --header: rgba(38, 38, 41, 0.9);
+  color-scheme: dark;
+}
+
+/* The user's system accent colour when WebKit exposes it, else the theme's fallback. Resolved once
+   here (theme blocks only set --accent-fallback) so no theme rule can outrank it. */
+:root[data-platform="macos"] {
+  --accent: var(--accent-fallback);
+  --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
+  --selected: color-mix(in srgb, var(--accent) 17%, transparent);
+  --danger-soft: color-mix(in srgb, var(--danger) 14%, transparent);
+  --warn-soft: color-mix(in srgb, var(--warn) 15%, transparent);
+  --ok-soft: color-mix(in srgb, var(--ok) 15%, transparent);
+}
+@supports (color: AccentColor) {
+  :root[data-platform="macos"] { --accent: AccentColor; }
+}
+
+/* ---- Window ------------------------------------------------------------------------------ */
+:root[data-platform="macos"],
+[data-platform="macos"] body { background: transparent; }
+
+[data-platform="macos"] .mono,
+[data-platform="macos"] pre.cmd { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+/* ---- Controls: capsules ------------------------------------------------------------------ */
+[data-platform="macos"] button {
+  background: var(--control);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 13px;
+}
+[data-platform="macos"] button:hover:not(:disabled) { background: var(--control-hover); }
+[data-platform="macos"] button.icon { padding: 5px 8px; }
+[data-platform="macos"] button.ghost { background: transparent; border-color: transparent; }
+[data-platform="macos"] button.ghost:hover:not(:disabled) { background: var(--control); }
+[data-platform="macos"] button.link { background: none; border: none; padding: 0; border-radius: 0; }
+[data-platform="macos"] button.primary { background: var(--accent); border-color: transparent; color: #fff; }
+[data-platform="macos"] button.danger { background: var(--control); }
+[data-platform="macos"] .dialog button.danger { background: var(--danger); border-color: transparent; color: #fff; }
+[data-platform="macos"] input:focus-visible,
+[data-platform="macos"] select:focus-visible,
+[data-platform="macos"] button:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: 1px; }
+
+[data-platform="macos"] input[type="search"],
+[data-platform="macos"] input[type="number"],
+[data-platform="macos"] select,
+[data-platform="macos"] .row3 input,
+[data-platform="macos"] .contact input[type="text"],
+[data-platform="macos"] .contact input[type="email"] {
+  background: var(--control);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+}
+[data-platform="macos"] .contact textarea { background: var(--control); border-radius: 9px; }
+
+/* ---- Chrome: toolbar, tabs, filter bar, status bar (glass shows through) ------------------ */
+[data-platform="macos"] .toolbar {
+  min-height: 52px;
+  /* Room for the traffic lights (trafficLightPosition in tauri.macos.conf.json). */
+  padding: 8px 14px 8px 86px;
+  background: transparent;
+  border-bottom: none;
+}
+[data-platform="macos"] .tabs,
+[data-platform="macos"] .segmented {
+  background: var(--control);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px;
+  gap: 2px;
+}
+[data-platform="macos"] .tabs { margin-right: 4px; }
+[data-platform="macos"] .tabs button,
+[data-platform="macos"] .segmented button {
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  padding: 4px 12px;
+}
+[data-platform="macos"] .tabs button:hover:not(:disabled),
+[data-platform="macos"] .segmented button:hover:not(:disabled) { background: var(--surface-2); }
+[data-platform="macos"] .tabs button.active,
+[data-platform="macos"] .segmented button.active {
+  background: var(--surface-solid);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14);
+}
+[data-platform="macos"] .search {
+  background: var(--control);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0 11px;
+}
+[data-platform="macos"] .search:focus-within {
+  background: var(--surface-solid);
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+[data-platform="macos"] .filterbar {
+  background: transparent;
+  border-bottom: none;
+  padding: 2px 14px 10px;
+}
+[data-platform="macos"] .chip .count { background: var(--surface-2); }
+[data-platform="macos"] .chip.active { background: var(--accent-soft); border-color: transparent; }
+[data-platform="macos"] .chip.active .count { background: var(--surface-solid); }
+
+[data-platform="macos"] .status {
+  background: transparent;
+  border-top: none;
+  padding: 7px 16px 8px;
+}
+
+[data-platform="macos"] .banner.update {
+  margin: 0 10px 8px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+}
+
+/* ---- Content: rounded panels on the glass ------------------------------------------------ */
+[data-platform="macos"] main { padding: 0 10px; gap: 10px; }
+[data-platform="macos"] main.with-detail { grid-template-columns: minmax(0, 1fr) 370px; }
+[data-platform="macos"] .table-wrap,
+[data-platform="macos"] .detail,
+[data-platform="macos"] main.scroll {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+[data-platform="macos"] .detail { border-left: 1px solid var(--border); }
+[data-platform="macos"] main.scroll { margin: 0 10px; padding: 0; }
+[data-platform="macos"] main.scroll .card { background: var(--surface-solid); border-radius: 12px; }
+
+[data-platform="macos"] table.ports th {
+  background: var(--header);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+[data-platform="macos"] table.ports td { border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent); }
+[data-platform="macos"] table.ports tbody tr:hover { background: var(--surface-2); }
+[data-platform="macos"] table.ports tbody tr.selected {
+  background: var(--selected);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+[data-platform="macos"] .badge { border-radius: 999px; }
+[data-platform="macos"] .note,
+[data-platform="macos"] .error { border-radius: 9px; }
+[data-platform="macos"] .server-list li { border-radius: 9px; }
+[data-platform="macos"] fieldset { border-radius: 12px; }
+
+/* ---- Floating: menus, dialogs, toast (CSS glass) ------------------------------------------ */
+[data-platform="macos"] .menu,
+[data-platform="macos"] .dialog,
+[data-platform="macos"] .toast:not(.error) {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--glass-edge);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow);
+  color: var(--text);
+}
+[data-platform="macos"] .menu { border-radius: 12px; padding: 5px; }
+[data-platform="macos"] .menu button { border-radius: 7px; background: transparent; border: none; }
+[data-platform="macos"] .menu button:hover,
+[data-platform="macos"] .menu button:focus-visible { background: var(--accent); color: #fff; }
+[data-platform="macos"] .dialog { border-radius: 18px; padding: 20px 22px; }
+[data-platform="macos"] .backdrop { background: rgba(0, 0, 0, 0.2); }
+[data-platform="macos"] .toast { border-radius: 999px; padding: 9px 18px; }
+[data-platform="macos"] .toast.error { border-radius: 999px; box-shadow: var(--shadow); }
+
+/* ---- Accessibility ----------------------------------------------------------------------- */
+/* Reduce Transparency: the native glass turns opaque by itself; make every CSS layer opaque too. */
+@media (prefers-reduced-transparency: reduce) {
+  :root[data-platform="macos"] {
+    --surface: #ffffff;
+    --control: #f2f2f4;
+    --control-hover: #e8e8ea;
+    --glass: #f6f6f8;
+    --header: #f6f6f8;
+  }
+  :root[data-platform="macos"][data-theme="dark"] {
+    --surface: #232326;
+    --control: #303033;
+    --control-hover: #3a3a3d;
+    --glass: #2c2c30;
+    --header: #2a2a2d;
+  }
+  [data-platform="macos"] .menu,
+  [data-platform="macos"] .dialog,
+  [data-platform="macos"] .toast,
+  [data-platform="macos"] table.ports th {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@media (prefers-reduced-transparency: reduce) and (prefers-color-scheme: dark) {
+  :root[data-platform="macos"]:not([data-theme="light"]) {
+    --surface: #232326;
+    --control: #303033;
+    --control-hover: #3a3a3d;
+    --glass: #2c2c30;
+    --header: #2a2a2d;
+  }
+}
+
+/* Increase Contrast: visible edges everywhere. */
+@media (prefers-contrast: more) {
+  :root[data-platform="macos"] {
+    --border: rgba(0, 0, 0, 0.42);
+    --glass-edge: rgba(0, 0, 0, 0.5);
+    --muted: #4a4a4f;
+  }
+  :root[data-platform="macos"][data-theme="dark"] {
+    --border: rgba(255, 255, 255, 0.45);
+    --glass-edge: rgba(255, 255, 255, 0.55);
+    --muted: #c7c7cc;
+  }
+}
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root[data-platform="macos"]:not([data-theme="light"]) {
+    --border: rgba(255, 255, 255, 0.45);
+    --glass-edge: rgba(255, 255, 255, 0.55);
+    --muted: #c7c7cc;
+  }
+}
+/* Reduce Motion is already honoured globally in styles.css. */
