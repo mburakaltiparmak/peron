@@ -17,6 +17,14 @@ Her testin adımları, beklenen sonucu ve son durumu burada tutulur. Yayın önc
 | 7 | Windows 10 | ⏳ | 2026-09-26: şu an cihaz yok; ertelendi |
 | 8 | Store ekran görüntüleri | ✅ | 2026-09-26: TR+EN, 6'şar adet, 1920×1080, Store arayüzü |
 | 9 | Gerçek kimlikli MSIX | ✅ | 2026-09-27: kurulum, davranış, WACK ve kaldırma |
+| 10 | macOS: DMG kurulumu ve ilk açılış (Gatekeeper) | ⏳ | — |
+| 11 | macOS: port listesi ve kapatma | ✅ | 2026-11-15: `lsof` ile birebir; `python3 -m http.server` kapatıldı |
+| 12 | macOS: menü çubuğu, Dock, kısayollar, çıkış | ✅ | 2026-11-15 |
+| 13 | macOS: oturum açılınca başlatma | ✅ | 2026-11-15: LaunchAgent plist doğrulandı |
+| 14 | macOS: bildirimler | ⏳ | — |
+| 15 | macOS: cam arayüzü (açık/koyu) | ✅ | 2026-11-15: ana pencere; Ayarlar diyaloğu ve menüler göz kontrolü bekliyor |
+| 16 | macOS: erişilebilirlik (VoiceOver, Saydamlığı azalt, Karşıtlığı artır) | ⏳ | — |
+| 17 | macOS 11–25 (Liquid Glass öncesi görünüm) | ⏳ | Cihaz yok |
 
 Arayüz üzerinden ayrıca doğrulanan akışlar (2026-09-26): dışa aktarma, uzak sunucu, hızlı sunucu
 değiştirme, geçmiş, bildirim, yerel kapatma, tepsi, Web3Forms.
@@ -174,3 +182,72 @@ Kimlik (`docs/store/PARTNER_CENTER.md`) betiğin varsayılanıdır; GitHub deği
 Sonra 4. testteki kurulum komutları (`peron-msix-real.cer`), 4. kontrol listesi, 5 (WACK) ve 6 (temizlik,
 paket adı `M.BurakAltiparmak.Peron`). Test bitince mutlaka kaldırın: aynı kimlikle yerel kurulum, Store'dan
 kurulumu engeller.
+
+---
+
+## macOS (10–17)
+
+Paketler: `src-tauri/target/release/bundle/dmg/Peron_<sürüm>_aarch64.dmg` (Apple Silicon, ad-hoc imzalı,
+**notarize edilmemiş**). Kimlik: `dev.burakaltiparmak.peron`.
+Ekran görüntüsü için yalnızca Peron penceresi yakalanır (`screencapture -l <pencere-id>`); tam ekran
+görüntüsü kişisel içerik gösterebilir.
+
+### 10. DMG kurulumu ve ilk açılış (Gatekeeper)
+İndirilmiş bir dosyayı taklit etmek için GitHub release'inden indirin ya da yerel `.dmg`'ye karantina
+ekleyin: `xattr -w com.apple.quarantine "0081;$(printf %x $(date +%s));Safari;" Peron_*.dmg`.
+1. `.dmg` açılır; Peron'u **Uygulamalar**'a sürükleyin.
+2. İlk açılış engellenmeli ("Peron" açılamadı / geliştirici doğrulanamadı) → **Bitti**.
+3. Sistem Ayarları → Gizlilik ve Güvenlik → **Yine de Aç** → parola: Peron açılmalı. Sonraki açılışlarda
+   uyarı çıkmamalı.
+4. README'deki `xattr -dr com.apple.quarantine /Applications/Peron.app` yolu da çalışmalı.
+5. "Hasarlı ve açılamıyor" uyarısı **çıkmamalı**. Çıkıyorsa imza bozulmuştur:
+   `codesign --verify --deep --strict /Applications/Peron.app`.
+
+### 11. Port listesi ve kapatma
+1. Liste `lsof -nP -iTCP -sTCP:LISTEN` ile aynı süreçleri ve PID'leri göstermeli. Root olmadan başka
+   kullanıcıların ve sistem servislerinin soketleri **görünmez** (beklenen); durum çubuğunda "Sınırlı yetki"
+   ve macOS'a özgü açıklama.
+2. `python3 -m http.server 8000` → satırı seç → ⌫ → onay → port boşalmalı.
+3. `launchd`, `WindowServer` gibi korumalı süreçler kapatılamamalı.
+
+### 12. Menü çubuğu, Dock, kısayollar, çıkış
+1. Menü çubuğunda tek renkli "P" ikonu; tıklayınca menü açılır.
+2. Pencere kapatılınca Dock ikonu kaybolur; menüden ya da Spotlight'tan açınca geri gelir.
+3. ⌘F arama, ⌘R yenile (sayfa yeniden yüklenmez), ⌫ seçili portu kapat, Esc.
+4. ⌘Q uygulamayı tamamen kapatır.
+
+### 13. Oturum açılınca başlatma
+Ayarlar → "Oturum açılınca başlat" → `~/Library/LaunchAgents/Peron.plist` oluşmalı (`--minimized`).
+Oturumu kapatıp açınca Peron yalnızca menü çubuğunda başlamalı (Dock ikonu yok). Kapatınca plist silinmeli.
+
+### 14. Bildirimler
+Yalnızca paketlenmiş `.app`'te (Uygulamalar'dan açılmış) çalışır; `tauri dev`'de görünmez.
+1. Peron açıkken ağdan erişilebilir bir port açın: `python3 -m http.server 8000` (`*:8000` dinler).
+   Birkaç saniye içinde "ağdan erişilebilir" bildirimi gelmeli. İlk seferde macOS bildirim izni
+   isteyebilir.
+2. Bildirim Peron adı ve ikonuyla görünmeli. Tıklayınca Peron penceresi açılmalı.
+3. Ayarlar → hatırlatma eşiği 1 dk → bir geliştirme portunu 1 dakikadan uzun açık tutun →
+   "uzun süredir açık" hatırlatması gelmeli.
+4. Sistem Ayarları → Bildirimler → Peron: listede doğru adla yer almalı.
+
+### 15. Cam arayüzü
+Açık ve koyu temada (Ayarlar → Tema):
+- pencere arkasında sistem camı;
+- trafik ışıkları araç çubuğuyla hizalı;
+- pencere araç çubuğunun boş yerinden sürüklenebiliyor;
+- sekmeler, filtreler, arama cam kapsül; seçili olan renk tonlu;
+- tablo metni okunaklı;
+- Dışa aktar menüsü, Ayarlar diyaloğu ve bildirim kutusu cam görünümünde.
+
+Tepsiye kapatıp yeniden açınca cam yine uygulanmış olmalı.
+
+### 16. Erişilebilirlik
+1. VoiceOver (⌘F5): sekmeler, filtreler, tablo satırları ve düğmeler adlarıyla okunmalı.
+2. Erişilebilirlik → Ekran → **Saydamlığı azalt**: bütün yüzeyler opak, metin okunaklı.
+3. **Karşıtlığı artır**: kenarlar belirgin, seçili kapsüller ayırt edilebilir.
+4. Hareketi azalt: geçişler anında.
+
+### 17. macOS 11–25
+Liquid Glass olmayan sürümlerde pencere arkasında klasik bulanık arka plan
+(`NSVisualEffectView`, kenar çubuğu malzemesi) görünmeli. Uygulama açılmalı, hata günlüğünde
+"window glass unavailable" olmamalı. Günlük: `~/Library/Logs/dev.burakaltiparmak.peron/peron.log`.

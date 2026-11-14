@@ -8,6 +8,9 @@ Legend: ✅ done in the repo · 🧑 needs you (account, hosting, manual test) �
 - [ ] `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test -- --include-ignored` (Windows + `.\docker\linux-build.ps1 test`)
 - [ ] CI green on `main`
 - [ ] Tag `v<version>` → CI drafts the GitHub release → review assets → publish (0.1.0-beta.1: published 2026-09-27)
+- [ ] Draft release has every asset: NSIS `.exe`, `.deb`, `.rpm`, `.AppImage`, `Peron_<version>_aarch64.dmg`, `peron-cli-x86_64-linux`, `peron-cli-x86_64-windows.exe`, `peron-cli-aarch64-macos`
+- [ ] macOS: download the `.dmg` from the draft and run `docs/MANUAL_TESTS.md` #10 (Gatekeeper first launch) and #14 (notifications)
+- [ ] `node site/build.mjs` after the version bump, then upload `site/peron` (the download page links to this tag's assets, macOS card included)
 - [ ] Check the portfolio page https://burakaltiparmak.dev/products/peron lists the new release (it reads GitHub Releases)
 
 ## 2. Microsoft Store — one-time setup (🧑)

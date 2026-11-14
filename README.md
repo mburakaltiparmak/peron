@@ -3,7 +3,7 @@
 <h1 align="center">Peron</h1>
 
 <p align="center">
-  Localhost port manager for Windows and Linux — see which process holds a port, who started it,
+  Localhost port manager for Windows, macOS and Linux — see which process holds a port, who started it,
   how long it has been open, and close the forgotten ones.<br>
   <b>Beta</b> · Free · <a href="https://burakaltiparmak.dev/products/peron">burakaltiparmak.dev/products/peron</a>
 </p>
@@ -29,14 +29,23 @@
   peron-cli kill 3000            # asks for confirmation (--yes in scripts)
   ```
   Linux: included in the .deb/.rpm (`/usr/bin/peron-cli`) or as a static binary (`peron-cli-x86_64-linux`, runs on any x86_64 distro) on the release page.
+  macOS (Apple Silicon): `peron-cli-aarch64-macos` on the release page — `chmod +x`, and remove the download quarantine once with `xattr -d com.apple.quarantine peron-cli-aarch64-macos`.
 
 ## Download
 | Platform | Where |
 |---|---|
 | Windows 10/11 (x64) | [Microsoft Store](https://apps.microsoft.com/detail/9MVV5PRQ9J6D) · [GitHub Releases](https://github.com/mburakaltiparmak/peron/releases) (`Peron_<version>_x64-setup.exe`) |
+| macOS 11+ (Apple Silicon) | [GitHub Releases](https://github.com/mburakaltiparmak/peron/releases) (`Peron_<version>_aarch64.dmg`) |
 | Linux x64 | [GitHub Releases](https://github.com/mburakaltiparmak/peron/releases): `.deb`, `.rpm`, `.AppImage` |
 
 The direct-download Windows installer is not code-signed yet, so SmartScreen may show "Windows protected your PC" → *More info* → *Run anyway*. The Microsoft Store version is signed by Microsoft.
+
+**macOS:** Peron is not notarized by Apple (no paid Developer ID), so macOS blocks the first launch:
+1. Open the `.dmg` and drag **Peron** to **Applications**.
+2. Open Peron once; macOS says it can't verify the developer → **Done**.
+3. **System Settings → Privacy & Security**, scroll down to *"Peron" was blocked…* → **Open Anyway**, confirm with your password.
+
+Or in Terminal: `xattr -dr com.apple.quarantine /Applications/Peron.app`. Peron lives in the menu bar; without `sudo` it lists the ports of your own processes (other users' and system services' sockets are not visible).
 
 ## Privacy
 No accounts, ads or telemetry. Port and process data never leave your device. See [PRIVACY.md](PRIVACY.md).
@@ -45,14 +54,14 @@ No accounts, ads or telemetry. Port and process data never leave your device. Se
 [SUPPORT.md](SUPPORT.md) · in-app *Contact* tab · mburakaltiparmak@gmail.com. Security issues: [SECURITY.md](SECURITY.md).
 
 ## Building from source
-Requirements: Node 22, Rust (stable, MSVC on Windows), Tauri 2 prerequisites.
+Requirements: Node 22, Rust (stable, MSVC on Windows), Tauri 2 prerequisites (macOS: Xcode Command Line Tools).
 
 ```sh
 npm ci
 npm run tauri dev          # run in development
 npm test                   # UI tests (Vitest)
 cargo test --manifest-path src-tauri/Cargo.toml
-npm run tauri build        # Windows: NSIS installer
+npm run tauri build        # Windows: NSIS installer · macOS: .app + .dmg (Apple Silicon, ad-hoc signed)
 npm run build:msix         # Windows: Microsoft Store MSIX (see packaging/msix)
 .\docker\linux-build.ps1   # Linux packages via Docker
 ```

@@ -79,6 +79,11 @@ write(
 <p class="muted">Store sürümü Microsoft tarafından imzalanır, otomatik güncellenir ve <a href="${repo}/blob/main/EULA.md">EULA</a> ile ücretsizdir. Doğrudan indirilen kurulum açık kaynaklıdır (<a href="${repo}/blob/main/LICENSE">GPL-3.0</a>) ve henüz imzalı değildir; SmartScreen uyarısında "Ek bilgi → Yine de çalıştır".<br>
 The Store version is signed by Microsoft, updates automatically and is free under the <a href="${repo}/blob/main/EULA.md">EULA</a>. The direct installer is open source (<a href="${repo}/blob/main/LICENSE">GPL-3.0</a>) and isn't code-signed yet; on the SmartScreen prompt choose "More info → Run anyway".</p></div>
 
+<div class="card"><h2>macOS 11+ (Apple Silicon)</h2>
+<a class="btn" href="${asset(`Peron_${version}_aarch64.dmg`)}">Peron_${esc(version)}_aarch64.dmg</a>
+<p class="muted">Apple tarafından onaylanmadığı (notarize edilmediği) için ilk açılışta engellenir: Peron'u Uygulamalar'a sürükleyin, bir kez açın, ardından Sistem Ayarları → Gizlilik ve Güvenlik → "Yine de Aç".<br>
+Not notarized by Apple, so macOS blocks the first launch: drag Peron to Applications, open it once, then System Settings → Privacy &amp; Security → "Open Anyway".</p></div>
+
 <div class="card"><h2>Linux x64</h2>
 <a class="btn" href="${asset(`Peron_${version}_amd64.deb`)}">.deb</a>
 <a class="btn" href="${asset(`Peron-${version}-1.x86_64.rpm`)}">.rpm</a>

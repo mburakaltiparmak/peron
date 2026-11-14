@@ -4,6 +4,26 @@ All notable changes to Peron. Versions follow [SemVer](https://semver.org/); pre
 tagged `vX.Y.Z-beta.N`. The Microsoft Store package uses the mapped MSIX version shown in
 parentheses (see `packaging/msix/build-msix.ps1`).
 
+## [Unreleased]
+
+### Added
+- **macOS (Apple Silicon, macOS 11+)**: `.dmg` on GitHub Releases, ad-hoc signed and not notarized
+  (see README for the first launch).
+  - Port scanning through libproc and process termination (SIGTERM, then SIGKILL).
+  - Protected-process lists for macOS.
+  - Menu bar extra. The Dock icon shows only while the window is open.
+  - Start at login (LaunchAgent), Notification Center alerts.
+  - ⌘ shortcuts and the Mac delete key.
+- macOS look, with Windows and Linux unchanged:
+  - native Liquid Glass behind the window (classic vibrancy before macOS 26);
+  - floating glass capsules for tabs, filters and search, with the selected item in tinted glass;
+  - glass menus and dialogs;
+  - Reduce Transparency / Increase Contrast support.
+- `peron-cli-aarch64-macos` release asset.
+
+### Changed
+- CI builds, tests and packages on macOS too; tagged releases include the `.dmg`.
+
 ## [0.1.0-beta.1] — 2026-09-27 (MSIX 0.1.1.0)
 
 First public beta.
